@@ -1,5 +1,9 @@
 # 逃之夭夭's Blog
 
+**博客地址：https://thesecondstep.github.io/Quarto-Blog/**
+
+---
+
 基于 [Quarto](https://quarto.org/) 构建的技术博客，托管于 GitHub Pages。
 
 ## 简介
