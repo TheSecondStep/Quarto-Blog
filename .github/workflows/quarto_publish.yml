@@ -21,7 +21,7 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
-          python-version: '3.12' #你的虚拟环境的python版本
+          python-version: '3.13' #你的虚拟环境的python版本
 
       - name: Install Dependencies
         run: |
