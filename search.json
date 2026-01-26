@@ -1,5 +1,19 @@
 [
   {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this blog"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Attention is all you need",
+    "section": "",
+    "text": "基于Quarto和GitHub Pages的个人博客网站搭建流程\n\n\n\ntools\n\n\n\n\n\n\n\n\n\nJan 25, 2026\n\n\n逃之夭夭\n\n\n\n\n\nNo matching items"
+  },
+  {
     "objectID": "posts/Quarto个人博客搭建/index.html",
     "href": "posts/Quarto个人博客搭建/index.html",
     "title": "基于Quarto和GitHub Pages的个人博客网站搭建流程",
@@ -40,19 +54,5 @@
     "title": "基于Quarto和GitHub Pages的个人博客网站搭建流程",
     "section": "结语",
     "text": "结语\n至此，基于Quarto的个人网站已经部署上线，支持通过GitHub Pages访问，通过GitHub Action自动化渲染。\n如果你在实际操作中遇到任何问题，欢迎在评论区留言。"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "About this blog"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "blog",
-    "section": "",
-    "text": "基于Quarto和GitHub Pages的个人博客网站搭建流程\n\n\n\ntools\n\n\n\n\n\n\n\n\n\nJan 25, 2026\n\n\n逃之夭夭\n\n\n\n\n\nNo matching items"
   }
 ]
