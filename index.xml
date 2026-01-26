@@ -1,0 +1,991 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>逃之夭夭 Blog</title>
+<link>https://github.com/TheSecondStep/Quarto-Blog/</link>
+<atom:link href="https://github.com/TheSecondStep/Quarto-Blog/index.xml" rel="self" type="application/rss+xml"/>
+<description>逃之夭夭&#39;s Blog</description>
+<generator>quarto-1.8.27</generator>
+<lastBuildDate>Sun, 25 Jan 2026 08:00:00 GMT</lastBuildDate>
+<item>
+  <title>基于Quarto和GitHub Pages的个人博客网站搭建流程</title>
+  <dc:creator>逃之夭夭 </dc:creator>
+  <link>https://github.com/TheSecondStep/Quarto-Blog/posts/Quarto个人博客搭建/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<blockquote class="blockquote">
+<p>基于Github Actions自动渲染Quarto博客</p>
+</blockquote>
+<p>本篇博客旨在提供完整的基于Quarto和GitHub Pages的个人博客网站搭建流程，帮助读者快速搭建个人博客系统。</p>
+<blockquote class="blockquote">
+<p>💡 在阅读之前，你应该已经：</p>
+<p>安装quarto cli并了解其基本用法，<a href="https://quarto.org/docs/get-started/">Get Started with quarto</a></p>
+</blockquote>
+<blockquote class="blockquote">
+<p>💡 了解最详细的quarto官方关于搭建博客网站的教程，自行阅读并知晓每一种方式，或是查阅如何修改以定制一个更个性化的博客网站。</p>
+<p>请参考：<a href="https://quarto.org/docs/websites/website-blog.html">quarto website-blog tutorial</a></p>
+<p>一个有效建议是： 你总是应该在完成搭建博客网站后查阅官方文档，以知晓更加完整的信息。</p>
+</blockquote>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">工具</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">cursor（或任何其他编程IDE，如vscode）</td>
+</tr>
+</tbody>
+</table>
+<section id="创建quarto-blog项目" class="level2">
+<h2 class="anchored" data-anchor-id="创建quarto-blog项目">创建Quarto Blog项目</h2>
+<ol type="1">
+<li><p>打开cursor命令面板，输入<strong>Quarto:Create Project</strong>创建项目</p>
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/Quarto个人博客搭建/create_project.png" class="img-fluid"></p></li>
+<li><p>选择<strong>Blog Project</strong></p>
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/Quarto个人博客搭建/blog_project.png" class="img-fluid"></p></li>
+<li><p>选择一个文件夹作为博客项目的根目录</p>
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/Quarto个人博客搭建/choose_path.png" class="img-fluid"></p></li>
+<li><p>为博客项目起名</p>
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/Quarto个人博客搭建/create_blog_name.png" class="img-fluid"></p></li>
+<li><p>quarto将会创建默认配置以支持博客网站功能</p>
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/Quarto个人博客搭建/blog_init_state.png" class="img-fluid"></p></li>
+<li><p>点击右上角“预览”按钮，quarto将为你渲染博客网站</p>
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/Quarto个人博客搭建/preview.png" class="img-fluid"></p></li>
+</ol>
+<p>这是在入门博客项目中创建的关键文件摘要：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">文件</th>
+<th style="text-align: left;">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>_quarto.yml</code></td>
+<td style="text-align: left;">Quarto 项目文件</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>index.qmd</code></td>
+<td style="text-align: left;">博客主页</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>about.qmd</code></td>
+<td style="text-align: left;">关于页面</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>posts/</code></td>
+<td style="text-align: left;">包含文章的目录</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>posts/_metadata.yml</code></td>
+<td style="text-align: left;"><code>posts</code> 的共享选项</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>styles.css</code></td>
+<td style="text-align: left;">网站的定制 CSS</td>
+</tr>
+</tbody>
+</table>
+<p>主页预览界面</p>
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/Quarto个人博客搭建/preview_render.png" class="img-fluid"></p>
+</section>
+<section id="项目文件介绍" class="level2">
+<h2 class="anchored" data-anchor-id="项目文件介绍">项目文件介绍</h2>
+<section id="主页" class="level3">
+<h3 class="anchored" data-anchor-id="主页">主页</h3>
+<p>主页是关于posts目录下所有博客的文章列表，如主页预览界面所示。</p>
+<p>源代码：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb1-1"><span class="pp" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">---</span></span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">title</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"blog_tutorial"</span></span>
+<span id="cb1-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">listing</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb1-4"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">contents</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> posts</span></span>
+<span id="cb1-5"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">feed</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">true</span></span>
+<span id="cb1-6"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sort</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"date desc"</span></span>
+<span id="cb1-7"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">type</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> default</span></span>
+<span id="cb1-8"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">categories</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">true</span></span>
+<span id="cb1-9"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sort-ui</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">false</span></span>
+<span id="cb1-10"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter-ui</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">false</span></span>
+<span id="cb1-11"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">page-layout</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> full</span></span>
+<span id="cb1-12"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">title-block-banner</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">true</span></span>
+<span id="cb1-13"><span class="pp" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">---</span></span></code></pre></div></div>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">字段</th>
+<th style="text-align: left;">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>title</code></td>
+<td style="text-align: left;">标题</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>categories</code></td>
+<td style="text-align: left;">开启博客分类</td>
+</tr>
+</tbody>
+</table>
+<section id="categories分类" class="level4">
+<h4 class="anchored" data-anchor-id="categories分类">Categories（分类）</h4>
+<p><code>categories: true</code>表示配置为启用分类，这些分类显示在主页的右侧边缘。</p>
+<p>分类从包含在列表中的文档的前置内容中读取。例如，这里是一个包含分类的样本帖子元数据：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb2-1"><span class="pp" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">---</span></span>
+<span id="cb2-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">title</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Post With Code"</span></span>
+<span id="cb2-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">description</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Post description"</span></span>
+<span id="cb2-4"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">author</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Fizz McPhee"</span></span>
+<span id="cb2-5"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">date</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"5/22/2021"</span></span>
+<span id="cb2-6"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">categories</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb2-7"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">-</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> news</span></span>
+<span id="cb2-8"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">-</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> code</span></span>
+<span id="cb2-9"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">-</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> analysis</span></span>
+<span id="cb2-10"><span class="pp" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">---</span></span></code></pre></div></div>
+</section>
+<section id="关于页面" class="level4">
+<h4 class="anchored" data-anchor-id="关于页面">关于页面</h4>
+<p><code>about.qmd</code>包含有关博客及其作者的更多信息。</p>
+<p><code>about.qmd</code>源代码可能的样子：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">---</span></span>
+<span id="cb3-2"><span class="an" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">title:</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"> "About"</span></span>
+<span id="cb3-3"><span class="an" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">image:</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"> profile.jpg</span></span>
+<span id="cb3-4"><span class="an" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">about:</span></span>
+<span id="cb3-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">  template: jolla</span></span>
+<span id="cb3-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">  links:</span></span>
+<span id="cb3-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    - icon: twitter</span></span>
+<span id="cb3-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">      text: Twitter</span></span>
+<span id="cb3-9"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">      href: https://twitter.com</span></span>
+<span id="cb3-10"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    - icon: linkedin</span></span>
+<span id="cb3-11"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">      text: LinkedIn</span></span>
+<span id="cb3-12"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">      href: https://linkedin.com</span></span>
+<span id="cb3-13"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    - icon: github</span></span>
+<span id="cb3-14"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">      text: Github</span></span>
+<span id="cb3-15"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">      href: https://github.com</span></span>
+<span id="cb3-16"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">---</span></span>
+<span id="cb3-17"></span>
+<span id="cb3-18">About this blog</span></code></pre></div></div>
+</section>
+<section id="posts文件夹" class="level4">
+<h4 class="anchored" data-anchor-id="posts文件夹">posts文件夹</h4>
+<p>构成博客内容的帖子位于<code>posts</code>目录中。</p>
+<p>通过在<code>posts</code>内创建一个子目录，并向该目录添加一个index.ipynb（或是 <code>index.qmd</code>）文件来为你的博客添加一篇新帖子。这个文件就是新的博客帖子，当你渲染(quarto render)它时，博客主页将自动更新，在列表顶部包含最新的帖子。</p>
+</section>
+</section>
+</section>
+<section id="发布publishing" class="level2">
+<h2 class="anchored" data-anchor-id="发布publishing">发布（Publishing）</h2>
+<p>有多种方式发布Quarto博客。本文仅介绍基于GitHub Action的GitHub Pages发布方式。</p>
+<ol type="1">
+<li>在github创建新仓库</li>
+</ol>
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/Quarto个人博客搭建/create_repo.png" class="img-fluid"></p>
+<ol start="2" type="1">
+<li><p>本地项目初始化并关联github仓库</p>
+<ol type="1">
+<li>创建README.md文件，内容为<code># 你的仓库名</code></li>
+<li>创建.gitignore文件</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1">/.quarto/</span>
+<span id="cb4-2">/_site/</span></code></pre></div></div>
+<ol start="3" type="1">
+<li>修改<code>_quarto.yml</code>中<code>site-url</code>为你的仓库地址</li>
+<li>提交修改并关联远端仓库</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">git</span> init</span>
+<span id="cb5-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">git</span> add .</span>
+<span id="cb5-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">git</span> commit <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-m</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"first commit"</span></span>
+<span id="cb5-4"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">git</span> branch <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-M</span> main</span>
+<span id="cb5-5"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">git</span> remote add origin git@github.com:TheSecondStep/quarto-blog-tutorial.git</span>
+<span id="cb5-6"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">git</span> push <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-u</span> origin main</span></code></pre></div></div></li>
+<li><p>本地执行一次命令行<code>quarto publish gh-pages</code> <code>quarto</code>将为你创建<code>gh-pages</code>分支，用于GitHub Pages部署网站使用。</p></li>
+<li><p>部署GitHub Action GitHub Action可以支持在<code>main</code>分支修改上传代码到github仓库后，自动触发工作流，渲染博客网站并更新。</p>
+<p>创建<code>.github/workflows/publish.yml</code>，内容如下</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode yml code-with-copy"><code class="sourceCode yaml"><span id="cb6-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">on</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb6-2"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">workflow_dispatch</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb6-3"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">push</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb6-4"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">branches</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> main</span></span>
+<span id="cb6-5"></span>
+<span id="cb6-6"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">name</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> Quarto Publish</span></span>
+<span id="cb6-7"></span>
+<span id="cb6-8"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">jobs</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb6-9"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">build-deploy</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb6-10"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">runs-on</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> ubuntu-latest</span></span>
+<span id="cb6-11"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">permissions</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb6-12"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">contents</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> write</span></span>
+<span id="cb6-13"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">steps</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb6-14"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">-</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">name</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> Check out repository</span></span>
+<span id="cb6-15"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">        </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">uses</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> actions/checkout@v4</span></span>
+<span id="cb6-16"></span>
+<span id="cb6-17"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">-</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">name</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> Set up Quarto</span></span>
+<span id="cb6-18"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">        </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">uses</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> quarto-dev/quarto-actions/setup@v2</span></span>
+<span id="cb6-19"></span>
+<span id="cb6-20"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">-</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">name</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> Render and Publish</span></span>
+<span id="cb6-21"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">        </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">uses</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> quarto-dev/quarto-actions/publish@v2</span></span>
+<span id="cb6-22"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">        </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">with</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb6-23"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">          </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">target</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> gh-pages</span></span>
+<span id="cb6-24"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">        </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">env</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb6-25"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">          </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">GITHUB_TOKEN</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> ${{ secrets.GITHUB_TOKEN }}</span></span></code></pre></div></div></li>
+<li><p>在github仓库设置的Actions部分的<code>Workflow permissions</code>勾选<code>Read and write permissions</code>。</p></li>
+<li><p>推送上述修改到github，后续只要手动修改博客并推送到main分支，将自动触发GitHub Action渲染网站。</p>
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/Quarto个人博客搭建/action.png" class="img-fluid"></p></li>
+</ol>
+<section id="执行代码" class="level3">
+<h3 class="anchored" data-anchor-id="执行代码">执行代码</h3>
+<p>GitHub Action也支持配置自动执行代码，来作为作为网站渲染的一部分。</p>
+<blockquote class="blockquote">
+<p>💡 确保你的代码能够在GitHub Action中执行成功的最佳实践是通过虚拟环境管理，如venv</p>
+<p>本文以uv管理venv虚拟环境为例，确保你的本地环境已经通过虚拟环境管理python代码且同步到GitHub</p>
+</blockquote>
+<p>修改publish.yml，然后推送到远端分支</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode yml code-with-copy"><code class="sourceCode yaml"><span id="cb7-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">on</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb7-2"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">workflow_dispatch</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb7-3"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">push</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb7-4"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">branches</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> main</span></span>
+<span id="cb7-5"></span>
+<span id="cb7-6"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">name</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> Quarto Publish</span></span>
+<span id="cb7-7"></span>
+<span id="cb7-8"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">jobs</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb7-9"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">build-deploy</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb7-10"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">runs-on</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> ubuntu-latest</span></span>
+<span id="cb7-11"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">permissions</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb7-12"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">contents</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> write</span></span>
+<span id="cb7-13"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">steps</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb7-14"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">-</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">name</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> Check out repository</span></span>
+<span id="cb7-15"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">        </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">uses</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> actions/checkout@v4</span></span>
+<span id="cb7-16"></span>
+<span id="cb7-17"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">-</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">name</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> Set up Quarto</span></span>
+<span id="cb7-18"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">        </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">uses</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> quarto-dev/quarto-actions/setup@v2</span></span>
+<span id="cb7-19"></span>
+<span id="cb7-20"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">-</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">name</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> Install uv</span></span>
+<span id="cb7-21"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">        </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">uses</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> astral-sh/setup-uv@v5</span></span>
+<span id="cb7-22"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">        </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">with</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb7-23"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">          </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">enable-cache</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">true</span></span>
+<span id="cb7-24"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">          </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">python-version</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'3.13'</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"> #你的虚拟环境的python版本</span></span>
+<span id="cb7-25"></span>
+<span id="cb7-26"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">-</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">name</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> Install Dependencies</span></span>
+<span id="cb7-27"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">        run</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">: </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">|</span></span>
+<span id="cb7-28">          uv sync</span>
+<span id="cb7-29"></span>
+<span id="cb7-30"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">-</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">name</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> Render and Publish</span></span>
+<span id="cb7-31"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">        </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">uses</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> quarto-dev/quarto-actions/publish@v2</span></span>
+<span id="cb7-32"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">        </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">with</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb7-33"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">          </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">target</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> gh-pages</span></span>
+<span id="cb7-34"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">        </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">env</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb7-35"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">          </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">GITHUB_TOKEN</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> ${{ secrets.GITHUB_TOKEN }}</span></span>
+<span id="cb7-36"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">          </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">QUARTO_PYTHON</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> .venv/bin/python</span></span></code></pre></div></div>
+</section>
+</section>
+<section id="添加评论区" class="level2">
+<h2 class="anchored" data-anchor-id="添加评论区">添加评论区</h2>
+<blockquote class="blockquote">
+<p>若思想没有回响，文字便只是一场永无止境的独白；评论区并非点缀，而是博客得以呼吸的肺叶。</p>
+</blockquote>
+<ol type="1">
+<li><p>登录https://giscus.app/zh-CN 并<strong>根据指引操作</strong>， <code>giscus</code>是利用<code>GitHub Discussions</code>实现的评论系统，天然与我们这套基于Github的博客系统适配。</p></li>
+<li><p>然后我们会看到类似这么一段配置</p>
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/Quarto个人博客搭建/giscus.png" class="img-fluid"></p></li>
+<li><p>修改<code>_quarto.yml</code>，加上对应配置</p>
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/Quarto个人博客搭建/comments_config.png" class="img-fluid"></p></li>
+<li><p>上传所有修改，我们的网站就支持评论功能了</p>
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/Quarto个人博客搭建/comments_view.png" class="img-fluid"></p></li>
+</ol>
+</section>
+<section id="结语" class="level2">
+<h2 class="anchored" data-anchor-id="结语">结语</h2>
+<p>至此，基于Quarto的个人网站已经部署上线，支持通过GitHub Pages访问，通过GitHub Action自动化渲染。</p>
+<p>如果你在实际操作中遇到任何问题，欢迎在评论区留言。</p>
+
+
+</section>
+
+ ]]></description>
+  <category>tools</category>
+  <guid>https://github.com/TheSecondStep/Quarto-Blog/posts/Quarto个人博客搭建/</guid>
+  <pubDate>Sun, 25 Jan 2026 08:00:00 GMT</pubDate>
+  <media:content url="https://github.com/TheSecondStep/Quarto-Blog/posts/Quarto个人博客搭建/image.jpg" medium="image" type="image/jpeg"/>
+</item>
+</channel>
+</rss>

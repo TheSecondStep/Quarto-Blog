@@ -1,0 +1,58 @@
+[
+  {
+    "objectID": "posts/Quarto个人博客搭建/index.html",
+    "href": "posts/Quarto个人博客搭建/index.html",
+    "title": "基于Quarto和GitHub Pages的个人博客网站搭建流程",
+    "section": "",
+    "text": "基于Github Actions自动渲染Quarto博客\n本篇博客旨在提供完整的基于Quarto和GitHub Pages的个人博客网站搭建流程，帮助读者快速搭建个人博客系统。"
+  },
+  {
+    "objectID": "posts/Quarto个人博客搭建/index.html#创建quarto-blog项目",
+    "href": "posts/Quarto个人博客搭建/index.html#创建quarto-blog项目",
+    "title": "基于Quarto和GitHub Pages的个人博客网站搭建流程",
+    "section": "创建Quarto Blog项目",
+    "text": "创建Quarto Blog项目\n\n打开cursor命令面板，输入Quarto:Create Project创建项目\n\n选择Blog Project\n\n选择一个文件夹作为博客项目的根目录\n\n为博客项目起名\n\nquarto将会创建默认配置以支持博客网站功能\n\n点击右上角“预览”按钮，quarto将为你渲染博客网站\n\n\n这是在入门博客项目中创建的关键文件摘要：\n\n\n\n文件\n描述\n\n\n\n\n_quarto.yml\nQuarto 项目文件\n\n\nindex.qmd\n博客主页\n\n\nabout.qmd\n关于页面\n\n\nposts/\n包含文章的目录\n\n\nposts/_metadata.yml\nposts 的共享选项\n\n\nstyles.css\n网站的定制 CSS\n\n\n\n主页预览界面"
+  },
+  {
+    "objectID": "posts/Quarto个人博客搭建/index.html#项目文件介绍",
+    "href": "posts/Quarto个人博客搭建/index.html#项目文件介绍",
+    "title": "基于Quarto和GitHub Pages的个人博客网站搭建流程",
+    "section": "项目文件介绍",
+    "text": "项目文件介绍\n\n主页\n主页是关于posts目录下所有博客的文章列表，如主页预览界面所示。\n源代码：\n---\ntitle: \"blog_tutorial\"\nlisting:\n  contents: posts\n  feed: true\n  sort: \"date desc\"\n  type: default\n  categories: true\n  sort-ui: false\n  filter-ui: false\npage-layout: full\ntitle-block-banner: true\n---\n\n\n\n字段\n描述\n\n\n\n\ntitle\n标题\n\n\ncategories\n开启博客分类\n\n\n\n\nCategories（分类）\ncategories: true表示配置为启用分类，这些分类显示在主页的右侧边缘。\n分类从包含在列表中的文档的前置内容中读取。例如，这里是一个包含分类的样本帖子元数据：\n---\ntitle: \"Post With Code\"\ndescription: \"Post description\"\nauthor: \"Fizz McPhee\"\ndate: \"5/22/2021\"\ncategories:\n  - news\n  - code\n  - analysis\n---\n\n\n关于页面\nabout.qmd包含有关博客及其作者的更多信息。\nabout.qmd源代码可能的样子：\n---\ntitle: \"About\"\nimage: profile.jpg\nabout:\n  template: jolla\n  links:\n    - icon: twitter\n      text: Twitter\n      href: https://twitter.com\n    - icon: linkedin\n      text: LinkedIn\n      href: https://linkedin.com\n    - icon: github\n      text: Github\n      href: https://github.com\n---\n\nAbout this blog\n\n\nposts文件夹\n构成博客内容的帖子位于posts目录中。\n通过在posts内创建一个子目录，并向该目录添加一个index.ipynb（或是 index.qmd）文件来为你的博客添加一篇新帖子。这个文件就是新的博客帖子，当你渲染(quarto render)它时，博客主页将自动更新，在列表顶部包含最新的帖子。"
+  },
+  {
+    "objectID": "posts/Quarto个人博客搭建/index.html#发布publishing",
+    "href": "posts/Quarto个人博客搭建/index.html#发布publishing",
+    "title": "基于Quarto和GitHub Pages的个人博客网站搭建流程",
+    "section": "发布（Publishing）",
+    "text": "发布（Publishing）\n有多种方式发布Quarto博客。本文仅介绍基于GitHub Action的GitHub Pages发布方式。\n\n在github创建新仓库\n\n\n\n本地项目初始化并关联github仓库\n\n创建README.md文件，内容为# 你的仓库名\n创建.gitignore文件\n\n/.quarto/\n/_site/\n\n修改_quarto.yml中site-url为你的仓库地址\n提交修改并关联远端仓库\n\ngit init\ngit add .\ngit commit -m \"first commit\"\ngit branch -M main\ngit remote add origin git@github.com:TheSecondStep/quarto-blog-tutorial.git\ngit push -u origin main\n本地执行一次命令行quarto publish gh-pages quarto将为你创建gh-pages分支，用于GitHub Pages部署网站使用。\n部署GitHub Action GitHub Action可以支持在main分支修改上传代码到github仓库后，自动触发工作流，渲染博客网站并更新。\n创建.github/workflows/publish.yml，内容如下\non:\n  workflow_dispatch:\n  push:\n    branches: main\n\nname: Quarto Publish\n\njobs:\n  build-deploy:\n    runs-on: ubuntu-latest\n    permissions:\n      contents: write\n    steps:\n      - name: Check out repository\n        uses: actions/checkout@v4\n\n      - name: Set up Quarto\n        uses: quarto-dev/quarto-actions/setup@v2\n\n      - name: Render and Publish\n        uses: quarto-dev/quarto-actions/publish@v2\n        with:\n          target: gh-pages\n        env:\n          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}\n在github仓库设置的Actions部分的Workflow permissions勾选Read and write permissions。\n推送上述修改到github，后续只要手动修改博客并推送到main分支，将自动触发GitHub Action渲染网站。\n\n\n\n执行代码\nGitHub Action也支持配置自动执行代码，来作为作为网站渲染的一部分。\n\n💡 确保你的代码能够在GitHub Action中执行成功的最佳实践是通过虚拟环境管理，如venv\n本文以uv管理venv虚拟环境为例，确保你的本地环境已经通过虚拟环境管理python代码且同步到GitHub\n\n修改publish.yml，然后推送到远端分支\non:\n  workflow_dispatch:\n  push:\n    branches: main\n\nname: Quarto Publish\n\njobs:\n  build-deploy:\n    runs-on: ubuntu-latest\n    permissions:\n      contents: write\n    steps:\n      - name: Check out repository\n        uses: actions/checkout@v4\n\n      - name: Set up Quarto\n        uses: quarto-dev/quarto-actions/setup@v2\n\n      - name: Install uv\n        uses: astral-sh/setup-uv@v5\n        with:\n          enable-cache: true\n          python-version: '3.13' #你的虚拟环境的python版本\n\n      - name: Install Dependencies\n        run: |\n          uv sync\n\n      - name: Render and Publish\n        uses: quarto-dev/quarto-actions/publish@v2\n        with:\n          target: gh-pages\n        env:\n          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}\n          QUARTO_PYTHON: .venv/bin/python"
+  },
+  {
+    "objectID": "posts/Quarto个人博客搭建/index.html#添加评论区",
+    "href": "posts/Quarto个人博客搭建/index.html#添加评论区",
+    "title": "基于Quarto和GitHub Pages的个人博客网站搭建流程",
+    "section": "添加评论区",
+    "text": "添加评论区\n\n若思想没有回响，文字便只是一场永无止境的独白；评论区并非点缀，而是博客得以呼吸的肺叶。\n\n\n登录https://giscus.app/zh-CN 并根据指引操作， giscus是利用GitHub Discussions实现的评论系统，天然与我们这套基于Github的博客系统适配。\n然后我们会看到类似这么一段配置\n\n修改_quarto.yml，加上对应配置\n\n上传所有修改，我们的网站就支持评论功能了"
+  },
+  {
+    "objectID": "posts/Quarto个人博客搭建/index.html#结语",
+    "href": "posts/Quarto个人博客搭建/index.html#结语",
+    "title": "基于Quarto和GitHub Pages的个人博客网站搭建流程",
+    "section": "结语",
+    "text": "结语\n至此，基于Quarto的个人网站已经部署上线，支持通过GitHub Pages访问，通过GitHub Action自动化渲染。\n如果你在实际操作中遇到任何问题，欢迎在评论区留言。"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this blog"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "blog",
+    "section": "",
+    "text": "基于Quarto和GitHub Pages的个人博客网站搭建流程\n\n\n\ntools\n\n\n\n\n\n\n\n\n\nJan 25, 2026\n\n\n逃之夭夭\n\n\n\n\n\nNo matching items"
+  }
+]
