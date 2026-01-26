@@ -3,13 +3,13 @@ project:
 
 website:
   description: "逃之夭夭's Blog"
-  site-url: https://your-website-url.example.com # you must change this appropriately for RSS feeds to work properly
+  site-url: https://github.com/TheSecondStep/Quarto-Blog # you must change this appropriately for RSS feeds to work properly
   title: "逃之夭夭 Blog"
   navbar:
     right:
       - about.qmd
       - icon: github
-        href: https://github.com/TheSecondStep/Quarto-Blog
+        href: https://github.com/TheSecondStep
   comments:
     giscus:
       repo: TheSecondStep/Quarto-Blog
