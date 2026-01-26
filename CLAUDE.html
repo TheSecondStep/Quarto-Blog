@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Attention is all you need – 逃之夭夭 Blog</title>
+<title>claude – 逃之夭夭 Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,8 +65,6 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
@@ -70,73 +103,15 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="styles.css">
-<link rel="alternate" type="application/rss+xml" title="逃之夭夭 Blog" href="index.xml" data-external="1"></head>
+</head>
 
-<body class="nav-fixed quarto-light">
+<body class="nav-fixed fullcontent quarto-light">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+  <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -167,74 +142,74 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-left">
-      <h1 class="title">Attention is all you need</h1>
-                      </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta column-page-left">
-
-      
-    
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(1)</span></div><div class="category" data-category="dG9vbHM=">tools <span class="quarto-category-count">(1)</span></div></div></div>
+    
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
 
 
 
 
+<section id="claude.md" class="level1">
+<h1>CLAUDE.md</h1>
+<p>本文件为 Claude Code (claude.ai/code) 在此代码库中工作时提供指导。</p>
+<section id="项目概述" class="level2">
+<h2 class="anchored" data-anchor-id="项目概述">项目概述</h2>
+<p>这是一个基于 Quarto 的技术博客，托管于 GitHub Pages。博客文章以 Jupyter notebooks (<code>.ipynb</code>) 或 Quarto markdown (<code>.qmd</code>) 文件编写。内容为中文，启用了 Giscus 评论功能。</p>
+</section>
+<section id="常用命令" class="level2">
+<h2 class="anchored" data-anchor-id="常用命令">常用命令</h2>
+<section id="开发环境" class="level3">
+<h3 class="anchored" data-anchor-id="开发环境">开发环境</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 安装/同步 Python 依赖（使用 uv，Python 3.13）</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 本地预览服务（支持实时刷新）</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> preview</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 渲染/构建网站</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="部署" class="level3">
+<h3 class="anchored" data-anchor-id="部署">部署</h3>
+<ul>
+<li>推送到 <code>main</code> 分支会自动触发 GitHub Actions 部署到 <code>gh-pages</code></li>
+<li>手动发布：<code>quarto publish gh-pages</code></li>
+</ul>
+</section>
+</section>
+<section id="项目结构" class="level2">
+<h2 class="anchored" data-anchor-id="项目结构">项目结构</h2>
+<ul>
+<li><code>posts/</code> - 博客文章，每篇文章存放在独立子目录中，包含 <code>index.ipynb</code> 或 <code>index.qmd</code></li>
+<li><code>posts/_metadata.yml</code> - 文章共享配置（当前设置：<code>freeze: true</code> 冻结计算输出，<code>title-block-banner: true</code> 启用标题横幅）</li>
+<li><code>index.qmd</code> - 首页，展示所有文章列表（按日期降序排列，启用分类）</li>
+<li><code>_quarto.yml</code> - Quarto 主配置文件（主题：flatly + brand 自定义，Giscus 评论配置为 <code>TheSecondStep/Quarto-Blog</code>）</li>
+<li><code>.github/workflows/quarto_publish.yml</code> - GitHub Actions CI/CD 工作流</li>
+</ul>
+</section>
+<section id="内容架构" class="level2">
+<h2 class="anchored" data-anchor-id="内容架构">内容架构</h2>
+<p><strong>文章</strong>：每篇博客文章是 <code>posts/</code> 下的子目录，包含 <code>index.ipynb</code> 或 <code>index.qmd</code> 文件。首页列表会自动发现并展示这些文章。</p>
+<p><strong>Freeze 模式</strong>：计算输出被冻结（<code>posts/_metadata.yml</code> 中设置 <code>freeze: true</code>）以确保构建可复现。编辑包含代码的 notebook 时，可能需要临时禁用 freeze 或手动重新渲染单元格。</p>
+<p><strong>分类</strong>：通过 <code>index.qmd</code> 中的 <code>categories: true</code> 在列表页启用分类显示。</p>
+</section>
+<section id="主题与样式" class="level2">
+<h2 class="anchored" data-anchor-id="主题与样式">主题与样式</h2>
+<ul>
+<li>基础主题：<code>flatly</code> (Bootswatch)</li>
+<li>自定义主题层：<code>brand</code></li>
+<li>自定义 CSS：<code>styles.css</code></li>
+<li>代码块：启用复制功能、启用边框</li>
+</ul>
 
 
+</section>
+</section>
 
-
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="dG9vbHM=" data-listing-date-sort="1769299200000" data-listing-file-modified-sort="1769411808323" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="813">
-<div class="thumbnail"><a href="./posts/Quarto个人博客搭建/index.html" class="no-external">
-
-<img loading="lazy" src="./posts/Quarto个人博客搭建/image.jpg" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/Quarto个人博客搭建/index.html" class="no-external">基于Quarto和GitHub Pages的个人博客网站搭建流程</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('dG9vbHM='); return false;">tools</div>
-
-</div>
-<div class="delink listing-description"><a href="./posts/Quarto个人博客搭建/index.html" class="no-external">
-基于Github Actions自动渲染Quarto博客
-</a></div>
-</div>
-<div class="metadata">
-<a href="./posts/Quarto个人博客搭建/index.html" class="no-external">
-<div class="listing-date">
-Jan 25, 2026
-</div>
-<div class="listing-author">
-逃之夭夭
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">No matching items</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
