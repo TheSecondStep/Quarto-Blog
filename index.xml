@@ -817,7 +817,7 @@ font-style: inherit;">=</span>batch_accuracy</span>
 <span id="cb40-9"></span>
 <span id="cb40-10">learn.remove_cbs(ProgressCallback)</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="27">
-<pre><code>&lt;fastai.learner.Learner at 0x2aa0ed05fd0&gt;</code></pre>
+<pre><code>&lt;fastai.learner.Learner at 0x2ce446b1fd0&gt;</code></pre>
 </div>
 </div>
 <div id="3f394f92" class="cell" data-execution_count="28">
@@ -926,7 +926,7 @@ font-style: inherit;">=</span>batch_accuracy</span>
 <span id="cb45-8"></span>
 <span id="cb45-9">learn2.remove_cbs(ProgressCallback)</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="30">
-<pre><code>&lt;fastai.learner.Learner at 0x2aa0ebc6350&gt;</code></pre>
+<pre><code>&lt;fastai.learner.Learner at 0x2ce443f2350&gt;</code></pre>
 </div>
 </div>
 <div id="45556fb7" class="cell" data-execution_count="31">
@@ -984,12 +984,12 @@ font-style: inherit;">0.1</span>)</span></code></pre></div></div>
 </section>
 <section id="使用resnet18" class="level2">
 <h2 class="anchored" data-anchor-id="使用resnet18">使用RESNET18</h2>
-<div id="e275cb75" class="cell" data-execution_count="33">
+<div id="e275cb75" class="cell" data-execution_count="32">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1">path <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> untar_data(URLs.MNIST)</span></code></pre></div></div>
 </div>
-<div id="f205e407" class="cell" data-execution_count="34">
+<div id="f205e407" class="cell" data-execution_count="33">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1">dls <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> ImageDataLoaders.from_folder(path,train<span class="op" style="color: #5E5E5E;
@@ -1002,7 +1002,7 @@ font-style: inherit;">=</span><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"testing"</span>)</span></code></pre></div></div>
 </div>
-<div id="adc1e90f" class="cell" data-execution_count="35">
+<div id="adc1e90f" class="cell" data-execution_count="34">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1">learn <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> vision_learner(dls, resnet18, pretrained<span class="op" style="color: #5E5E5E;
@@ -1012,29 +1012,88 @@ background-color: null;
 font-style: inherit;">False</span>,</span>
 <span id="cb51-2">                    loss_func<span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span>F.cross_entropy, metrics<span class="op" style="color: #5E5E5E;
+font-style: inherit;">=</span>CrossEntropyLossFlat(), metrics<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span>accuracy)</span>
 <span id="cb51-3">learn.remove_cbs(ProgressCallback)</span></code></pre></div></div>
-<div class="cell-output cell-output-display" data-execution_count="35">
-<pre><code>&lt;fastai.learner.Learner at 0x2aa2aea4410&gt;</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="34">
+<pre><code>&lt;fastai.learner.Learner at 0x2ce5fe02ad0&gt;</code></pre>
 </div>
 </div>
-<div id="f155f00c" class="cell" data-execution_count="36">
+<div id="f155f00c" class="cell" data-execution_count="35">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1">learn.fit_one_cycle(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">5</span>, <span class="fl" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0.1</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[0, 1.1184285879135132, 791.0833129882812, 0.8259999752044678, '00:34']
-[1, 0.929822564125061, 3.3093323707580566, 0.9657999873161316, '00:38']
+<pre><code>[0, 1.1184285879135132, 791.0833129882812, 0.8259999752044678, '00:32']
+[1, 0.929822564125061, 3.3093323707580566, 0.9657999873161316, '00:32']
 [2, 0.4890580475330353, 1.0338960886001587, 0.9674000144004822, '00:32']
-[3, 0.08392318338155746, 0.047650303691625595, 0.989799976348877, '00:31']
-[4, 0.026931514963507652, 0.021246496587991714, 0.9937999844551086, '00:31']</code></pre>
+[3, 0.08392318338155746, 0.047650303691625595, 0.989799976348877, '00:32']
+[4, 0.026931514963507652, 0.021246496587991714, 0.9937999844551086, '00:32']</code></pre>
 </div>
 </div>
 <p>正确率直接飙到99.38%，Amazing！！！</p>
+<section id="查看混淆矩阵" class="level3">
+<h3 class="anchored" data-anchor-id="查看混淆矩阵">查看混淆矩阵</h3>
+<p>最后，让我们看看损失最高的图像长什么样，是否确实难以分辨</p>
+<div id="e8ba375e" class="cell" data-execution_count="36">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> fastai.vision.widgets <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span></span></code></pre></div></div>
+</div>
+<div id="c3ad827a" class="cell" data-execution_count="37">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1">interp <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ClassificationInterpretation.from_learner(learn)</span>
+<span id="cb56-2">interp.plot_confusion_matrix()</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/基于MNIST全量数据集的神经网络训练/index_files/figure-html/cell-38-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="91eef2ce" class="cell" data-execution_count="38">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 查看loss最高的5张图片，可以看到确实都挺难辨认的</span></span>
+<span id="cb57-2">interp.plot_top_losses(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>, nrows<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/基于MNIST全量数据集的神经网络训练/index_files/figure-html/cell-39-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="a9a59fd1" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 以训练集中的`0`为例，这些就算是人类也难以分辨数字是0</span></span>
+<span id="cb58-2">cleaner <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ImageClassifierCleaner(learn)</span>
+<span id="cb58-3">cleaner</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"af5f75692b614097815e43fb70963c6e","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+</div>
+</section>
 </section>
 <section id="小结" class="level2">
 <h2 class="anchored" data-anchor-id="小结">小结</h2>

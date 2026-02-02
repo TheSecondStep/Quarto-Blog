@@ -60,7 +60,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -108,6 +108,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
 <script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
 <link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
 
 
 <link rel="stylesheet" href="../../styles.css">
@@ -564,7 +568,7 @@ accuracy of 9:  0.8334985375404358</code></pre>
 <span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>learn.remove_cbs(ProgressCallback)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="27">
-<pre><code>&lt;fastai.learner.Learner at 0x2aa0ed05fd0&gt;</code></pre>
+<pre><code>&lt;fastai.learner.Learner at 0x2ce446b1fd0&gt;</code></pre>
 </div>
 </div>
 <div id="3f394f92" class="cell" data-execution_count="28">
@@ -637,7 +641,7 @@ accuracy of 9:  0.8334985375404358</code></pre>
 <span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>learn2.remove_cbs(ProgressCallback)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="30">
-<pre><code>&lt;fastai.learner.Learner at 0x2aa0ebc6350&gt;</code></pre>
+<pre><code>&lt;fastai.learner.Learner at 0x2ce443f2350&gt;</code></pre>
 </div>
 </div>
 <div id="45556fb7" class="cell" data-execution_count="31">
@@ -689,31 +693,70 @@ accuracy of 9:  0.8334985375404358</code></pre>
 </section>
 <section id="使用resnet18" class="level2">
 <h2 class="anchored" data-anchor-id="使用resnet18">使用RESNET18</h2>
-<div id="e275cb75" class="cell" data-execution_count="33">
+<div id="e275cb75" class="cell" data-execution_count="32">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>path <span class="op">=</span> untar_data(URLs.MNIST)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="f205e407" class="cell" data-execution_count="34">
+<div id="f205e407" class="cell" data-execution_count="33">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>dls <span class="op">=</span> ImageDataLoaders.from_folder(path,train<span class="op">=</span><span class="st">"training"</span>,valid<span class="op">=</span><span class="st">"testing"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="adc1e90f" class="cell" data-execution_count="35">
+<div id="adc1e90f" class="cell" data-execution_count="34">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>learn <span class="op">=</span> vision_learner(dls, resnet18, pretrained<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>                    loss_func<span class="op">=</span>F.cross_entropy, metrics<span class="op">=</span>accuracy)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>                    loss_func<span class="op">=</span>CrossEntropyLossFlat(), metrics<span class="op">=</span>accuracy)</span>
 <span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>learn.remove_cbs(ProgressCallback)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="35">
-<pre><code>&lt;fastai.learner.Learner at 0x2aa2aea4410&gt;</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="34">
+<pre><code>&lt;fastai.learner.Learner at 0x2ce5fe02ad0&gt;</code></pre>
 </div>
 </div>
-<div id="f155f00c" class="cell" data-execution_count="36">
+<div id="f155f00c" class="cell" data-execution_count="35">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>learn.fit_one_cycle(<span class="dv">5</span>, <span class="fl">0.1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[0, 1.1184285879135132, 791.0833129882812, 0.8259999752044678, '00:34']
-[1, 0.929822564125061, 3.3093323707580566, 0.9657999873161316, '00:38']
+<pre><code>[0, 1.1184285879135132, 791.0833129882812, 0.8259999752044678, '00:32']
+[1, 0.929822564125061, 3.3093323707580566, 0.9657999873161316, '00:32']
 [2, 0.4890580475330353, 1.0338960886001587, 0.9674000144004822, '00:32']
-[3, 0.08392318338155746, 0.047650303691625595, 0.989799976348877, '00:31']
-[4, 0.026931514963507652, 0.021246496587991714, 0.9937999844551086, '00:31']</code></pre>
+[3, 0.08392318338155746, 0.047650303691625595, 0.989799976348877, '00:32']
+[4, 0.026931514963507652, 0.021246496587991714, 0.9937999844551086, '00:32']</code></pre>
 </div>
 </div>
 <p>正确率直接飙到99.38%，Amazing！！！</p>
+<section id="查看混淆矩阵" class="level3">
+<h3 class="anchored" data-anchor-id="查看混淆矩阵">查看混淆矩阵</h3>
+<p>最后，让我们看看损失最高的图像长什么样，是否确实难以分辨</p>
+<div id="e8ba375e" class="cell" data-execution_count="36">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastai.vision.widgets <span class="im">import</span> <span class="op">*</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="c3ad827a" class="cell" data-execution_count="37">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>interp <span class="op">=</span> ClassificationInterpretation.from_learner(learn)</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>interp.plot_confusion_matrix()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-38-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="91eef2ce" class="cell" data-execution_count="38">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 查看loss最高的5张图片，可以看到确实都挺难辨认的</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>interp.plot_top_losses(<span class="dv">5</span>, nrows<span class="op">=</span><span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-39-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="a9a59fd1" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 以训练集中的`0`为例，这些就算是人类也难以分辨数字是0</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>cleaner <span class="op">=</span> ImageClassifierCleaner(learn)</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>cleaner</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"af5f75692b614097815e43fb70963c6e","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+</div>
+</section>
 </section>
 <section id="小结" class="level2">
 <h2 class="anchored" data-anchor-id="小结">小结</h2>
