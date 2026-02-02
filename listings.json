@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/基于MNIST全量数据集的神经网络训练/index.html",
       "/posts/Quarto个人博客搭建/index.html"
     ]
   }

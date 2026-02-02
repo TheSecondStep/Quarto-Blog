@@ -10,7 +10,1053 @@
 <atom:link href="https://github.com/TheSecondStep/Quarto-Blog/index.xml" rel="self" type="application/rss+xml"/>
 <description>逃之夭夭&#39;s Blog</description>
 <generator>quarto-1.8.27</generator>
-<lastBuildDate>Sun, 25 Jan 2026 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Fri, 30 Jan 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>基于MNIST全量数据集的神经网络训练</title>
+  <dc:creator>逃之夭夭 </dc:creator>
+  <link>https://github.com/TheSecondStep/Quarto-Blog/posts/基于MNIST全量数据集的神经网络训练/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<blockquote class="blockquote">
+<p>训练你的第一个神经网络</p>
+</blockquote>
+<section id="神经网络训练流程" class="level2">
+<h2 class="anchored" data-anchor-id="神经网络训练流程">神经网络训练流程</h2>
+<p>下图是训练神经网络基本的七个步骤：</p>
+<ol type="1">
+<li>初始化权重参数，一般采用随机化权重也会有良好的效果；</li>
+<li>通过神经网络的计算，得到预测值；</li>
+<li>计算损失函数，损失函数是衡量预测值与真实值之间差异的函数，损失函数越小，预测值与真实值越接近；</li>
+<li>计算梯度，采用SGD（随机梯度下降）算法计算梯度，梯度是损失函数对权重参数的偏导数，表示损失函数在权重参数处的变化率；</li>
+<li>更新权重参数，根据梯度更新权重参数，使得损失函数最小化；</li>
+<li>重复步骤2-5，直到损失函数收敛；</li>
+<li>停止神经网络训练，一般取决于两种情况：
+<ul>
+<li>达到预设的训练次数；</li>
+<li>损失函数收敛到预设的阈值。</li>
+</ul></li>
+</ol>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">graph LR
+  init --&gt; predict --&gt; loss --&gt; gradient --&gt; step --&gt; stop
+  step -- repeat --&gt; predict
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="mnist数据集" class="level2">
+<h2 class="anchored" data-anchor-id="mnist数据集">MNIST数据集</h2>
+<p>MNIST数据集是手写数字（0-9）的图片数据集，包含60000个训练样本和10000个测试样本。每个样本是一个28x28的灰度图像，表示一个手写数字。</p>
+<p>加载MNIST数据集</p>
+<div id="85cd36bb" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># fastai课程预设置导入包</span></span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> fastbook</span>
+<span id="cb1-3">fastbook.setup_book()</span>
+<span id="cb1-4"></span>
+<span id="cb1-5"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> fastai.vision.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">all</span> <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span></span></code></pre></div></div>
+</div>
+<div id="962edb06" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">path <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> untar_data(URLs.MNIST)</span></code></pre></div></div>
+</div>
+<p>查看MNIST数据集目录结构</p>
+<div id="05b0e011" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">path.ls()</span></code></pre></div></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<pre><code>[Path('D:/User/ChenBo/.fastai/data/mnist_png/testing'), Path('D:/User/ChenBo/.fastai/data/mnist_png/training')]</code></pre>
+</div>
+</div>
+<div id="7b7c9089" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">training_path <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> path<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'training'</span></span>
+<span id="cb5-2">training_path.ls()</span></code></pre></div></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>[Path('D:/User/ChenBo/.fastai/data/mnist_png/training/0'), Path('D:/User/ChenBo/.fastai/data/mnist_png/training/1'), Path('D:/User/ChenBo/.fastai/data/mnist_png/training/2'), Path('D:/User/ChenBo/.fastai/data/mnist_png/training/3'), Path('D:/User/ChenBo/.fastai/data/mnist_png/training/4'), Path('D:/User/ChenBo/.fastai/data/mnist_png/training/5'), Path('D:/User/ChenBo/.fastai/data/mnist_png/training/6'), Path('D:/User/ChenBo/.fastai/data/mnist_png/training/7'), Path('D:/User/ChenBo/.fastai/data/mnist_png/training/8'), Path('D:/User/ChenBo/.fastai/data/mnist_png/training/9')]</code></pre>
+</div>
+</div>
+<div id="ea71ecdb" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">testing_path <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> path<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'testing'</span></span>
+<span id="cb7-2">testing_path.ls()</span></code></pre></div></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>[Path('D:/User/ChenBo/.fastai/data/mnist_png/testing/0'), Path('D:/User/ChenBo/.fastai/data/mnist_png/testing/1'), Path('D:/User/ChenBo/.fastai/data/mnist_png/testing/2'), Path('D:/User/ChenBo/.fastai/data/mnist_png/testing/3'), Path('D:/User/ChenBo/.fastai/data/mnist_png/testing/4'), Path('D:/User/ChenBo/.fastai/data/mnist_png/testing/5'), Path('D:/User/ChenBo/.fastai/data/mnist_png/testing/6'), Path('D:/User/ChenBo/.fastai/data/mnist_png/testing/7'), Path('D:/User/ChenBo/.fastai/data/mnist_png/testing/8'), Path('D:/User/ChenBo/.fastai/data/mnist_png/testing/9')]</code></pre>
+</div>
+</div>
+<p>数据集中的每一张图片都是类似下图所示的一张手写阿拉伯数字</p>
+<div id="7a4b119f" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">zero_path <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> training_path<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'0'</span></span>
+<span id="cb9-2">img_0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Image.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">open</span>(zero_path.ls()[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>])</span>
+<span id="cb9-3">img_0</span></code></pre></div></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<div>
+<figure class="figure">
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/基于MNIST全量数据集的神经网络训练/index_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="开始训练" class="level2">
+<h2 class="anchored" data-anchor-id="开始训练">开始训练</h2>
+<section id="构建神经网络输入" class="level3">
+<h3 class="anchored" data-anchor-id="构建神经网络输入">构建神经网络输入</h3>
+<p>计算机并不认识图片，需要将图片转换为数字，才能进行训练。</p>
+<p>每张图片由28 * 28的像素点组成，每个像素点由0-255的灰度值表示，0表示白色，255表示黑色。（现代的彩色图片是基于RGB三个通道确定一个像素点）</p>
+<p>神经网络需要基于矩阵乘法进行大量并行计算，因此我们需要将[28 * 28]像素点压缩到一个维度上，构成一个784维的向量（一阶张量）。</p>
+<p>最终60000张训练集图片构成[60000, 784]的矩阵（二阶张量）</p>
+</section>
+<section id="创建基座模型" class="level3">
+<h3 class="anchored" data-anchor-id="创建基座模型">创建基座模型</h3>
+<p>为了使后续的模型训练有参照，每一个神经网络训练之前都应该定义一个可以快速实现的基座模型。</p>
+<p>一个简单明了的思路是像素相似度。基于训练集图像计算出每个数字（0-9）的所有图像的像素平均值，分类时计算模型和验证集的L1范式（也成为平均绝对差）值，分类为差值最小的数字</p>
+<p>由于该简单模型确定为像素平均值，因此不需要进行训练，步骤简化为：</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">graph LR
+  predict --&gt; loss --&gt; stop
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<div id="91923e6f" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 将训练集0-9的Path加载到一个list中</span></span>
+<span id="cb10-2">training_paths <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [training_path<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>i<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>)]</span>
+<span id="cb10-3">training_paths</span></code></pre></div></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code>[Path('D:/User/ChenBo/.fastai/data/mnist_png/training/0'),
+ Path('D:/User/ChenBo/.fastai/data/mnist_png/training/1'),
+ Path('D:/User/ChenBo/.fastai/data/mnist_png/training/2'),
+ Path('D:/User/ChenBo/.fastai/data/mnist_png/training/3'),
+ Path('D:/User/ChenBo/.fastai/data/mnist_png/training/4'),
+ Path('D:/User/ChenBo/.fastai/data/mnist_png/training/5'),
+ Path('D:/User/ChenBo/.fastai/data/mnist_png/training/6'),
+ Path('D:/User/ChenBo/.fastai/data/mnist_png/training/7'),
+ Path('D:/User/ChenBo/.fastai/data/mnist_png/training/8'),
+ Path('D:/User/ChenBo/.fastai/data/mnist_png/training/9')]</code></pre>
+</div>
+</div>
+<div id="d0784005" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 将训练集所有图像转换为tensor，构建为一个包含60000个tensor的list，每个tensor为[28, 28]的二阶张量</span></span>
+<span id="cb12-2">training_nums <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [[tensor(Image.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">open</span>(image)) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> image <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> path.ls()] <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> path <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> training_paths]</span>
+<span id="cb12-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(training_nums)</span></code></pre></div></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>10</code></pre>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>❓ 为什么一个Image对象可以通过tensor构造函数转换为tensor</p>
+<p>核心在于 <code>Array Interface</code>（数组接口）协议： 协议对接： PIL的Image类实现了<code>__array_interface__</code>属性，主动向外暴露内存指针和形状； 底层识别： <code>torch.tensor</code>的构造逻辑会自动检测此属性，实现类似<code>NumPy</code>的无缝数据拷贝。</p>
+</blockquote>
+<div id="f25e3ddd" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 计算每个数字的像素平均值</span></span>
+<span id="cb14-2"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 1. 堆叠张量</span></span>
+<span id="cb14-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 2. 转成float类型</span></span>
+<span id="cb14-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 3. 基于维度0（即我们堆叠图片的方向）取平均值</span></span>
+<span id="cb14-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 4. 归一化像素值（/255，使像素值分布在[0, 1]区间）</span></span>
+<span id="cb14-6">means <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [torch.stack(number).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>().mean(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">255</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> number <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> training_nums]</span></code></pre></div></div>
+</div>
+<div id="4ce5a009" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 查看0-9在MNIST训练集平均像素下的图像</span></span>
+<span id="cb15-2">show_images(means)</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/基于MNIST全量数据集的神经网络训练/index_files/figure-html/cell-11-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="dd9f8bc2" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#加载测试集</span></span>
+<span id="cb16-2">testing_paths <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [testing_path<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>i<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>)]</span>
+<span id="cb16-3">testing_paths</span></code></pre></div></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>[Path('D:/User/ChenBo/.fastai/data/mnist_png/testing/0'),
+ Path('D:/User/ChenBo/.fastai/data/mnist_png/testing/1'),
+ Path('D:/User/ChenBo/.fastai/data/mnist_png/testing/2'),
+ Path('D:/User/ChenBo/.fastai/data/mnist_png/testing/3'),
+ Path('D:/User/ChenBo/.fastai/data/mnist_png/testing/4'),
+ Path('D:/User/ChenBo/.fastai/data/mnist_png/testing/5'),
+ Path('D:/User/ChenBo/.fastai/data/mnist_png/testing/6'),
+ Path('D:/User/ChenBo/.fastai/data/mnist_png/testing/7'),
+ Path('D:/User/ChenBo/.fastai/data/mnist_png/testing/8'),
+ Path('D:/User/ChenBo/.fastai/data/mnist_png/testing/9')]</code></pre>
+</div>
+</div>
+<div id="426ec4fc" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 堆叠10个数字平均像素图像</span></span>
+<span id="cb18-2">mean_stack <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.stack(means)</span>
+<span id="cb18-3">mean_stack.shape</span></code></pre></div></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>torch.Size([10, 28, 28])</code></pre>
+</div>
+</div>
+<div id="b9956941" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#定义损失函数</span></span>
+<span id="cb20-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> mean_loss(preds, targets):</span>
+<span id="cb20-3">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> (preds <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> targets.unsqueeze(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">abs</span>().mean((<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)).argmin(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span></code></pre></div></div>
+</div>
+<div id="d535ee66" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 加载测试集</span></span>
+<span id="cb21-2">testing_nums <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [[tensor(Image.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">open</span>(image)) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> image <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> path.ls()] <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> path <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> testing_paths]</span>
+<span id="cb21-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(testing_nums)</span></code></pre></div></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<pre><code>10</code></pre>
+</div>
+</div>
+<div id="982a482b" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 计算验证集的准确度</span></span>
+<span id="cb23-2">similarity_accuracy <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb23-3"></span>
+<span id="cb23-4"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> i,test_num <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">enumerate</span>(testing_nums):</span>
+<span id="cb23-5">  curr <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (mean_loss(mean_stack, torch.stack(test_num)) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> i).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>().mean()</span>
+<span id="cb23-6">  similarity_accuracy.append(curr)</span>
+<span id="cb23-7">  <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"accuracy of </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>i<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">: "</span>, curr.item())</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>accuracy of 0:  0.9132652878761292
+accuracy of 1:  0.9964757561683655
+accuracy of 2:  0.5145348906517029
+accuracy of 3:  0.7405940890312195
+accuracy of 4:  0.6537678241729736
+accuracy of 5:  0.22757847607135773
+accuracy of 6:  0.8486430048942566
+accuracy of 7:  0.7821011543273926
+accuracy of 8:  0.6529774069786072
+accuracy of 9:  0.8334985375404358</code></pre>
+</div>
+</div>
+<div id="bf98a0e9" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 平均准确率</span></span>
+<span id="cb25-2">torch.stack(similarity_accuracy).mean().item()</span></code></pre></div></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
+<pre><code>0.7163436412811279</code></pre>
+</div>
+</div>
+<p>可见这么简单的一个模型（不需要训练），仅通过像素平均值，准确率就达到了71.63%，作为我们的基座模型，是一个很好的起点。</p>
+<p>但是其余接近30%判断错误的图像究竟是长什么样呢，以至于容易混淆？让我们一探究竟</p>
+<div id="6ed2628f" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 查看testing数据集中0的图像</span></span>
+<span id="cb27-2">mean_loss(mean_stack, torch.stack(testing_nums[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>]))</span></code></pre></div></div>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<pre><code>tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 3, 0, 6, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 8, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 9, 6, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 6, 0, 0, 0, 0, 6, 0, 0, 0, 6, 0, 0, 0, 6, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 8, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0,
+        0, 9, 0, 0, 0, 8, 0, 0, 0, 6, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 6, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 6, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 3, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 6, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 6, 9, 8, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 1, 0, 0, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 8, 0, 0, 0, 0,
+        6, 0, 6, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 6, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0,
+        0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 6, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])</code></pre>
+</div>
+</div>
+<p>可以看到第10张图片（索引下标为9）被误判成了6,让我们加载下这张图片看看</p>
+<div id="ac93f595" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1">testing_zero <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> testing_paths[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>].ls()</span>
+<span id="cb29-2">img_0_9 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Image.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">open</span>(testing_zero[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span>])</span>
+<span id="cb29-3">img_0_9</span></code></pre></div></div>
+<div class="cell-output cell-output-display" data-execution_count="18">
+<div>
+<figure class="figure">
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/基于MNIST全量数据集的神经网络训练/index_files/figure-html/cell-19-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>这个<code>0</code>确实长的有点犯规，有那么一丢丢像6</p>
+<p>再看下第13张（索引下标为12）长得像3的图片</p>
+<div id="cabc8a58" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1">img_0_12 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Image.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">open</span>(testing_zero[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">12</span>])</span>
+<span id="cb30-2">img_0_12</span></code></pre></div></div>
+<div class="cell-output cell-output-display" data-execution_count="19">
+<div>
+<figure class="figure">
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/基于MNIST全量数据集的神经网络训练/index_files/figure-html/cell-20-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>这个<code>0</code>就和3没什么关联性了，可见基于像素平均值是一个很粗糙的模型构建法。</p>
+<p>下面让我们正式进入神经网络训练，看看神经网络的魔力吧！</p>
+</section>
+<section id="神经网络训练" class="level3">
+<h3 class="anchored" data-anchor-id="神经网络训练">神经网络训练</h3>
+<section id="加载数据集dataloaders" class="level4">
+<h4 class="anchored" data-anchor-id="加载数据集dataloaders">加载数据集DataLoaders</h4>
+<p>fastai中的数据集由一个(训练集，验证集)通过DataLoaders构造函数，即dls = DataLoaders(train_dl, test_dl)创建 dl由DataSet拆分成mini-batch产生 DataSet是由(模型输入x， 对应的标签y)元组组成的列表</p>
+<div id="0f992d31" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 构造模型输入x，即由所有训练集图像的一维向量（tensor）构成的list</span></span>
+<span id="cb31-2">training_tensors <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [tensor(Image.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">open</span>(image)) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> path <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> training_paths <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> image <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> path.ls()]</span>
+<span id="cb31-3">training_stack <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.stack(training_tensors).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>() <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">255</span></span>
+<span id="cb31-4">train_x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> training_stack.view(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">28</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">28</span>)</span>
+<span id="cb31-5">train_x.shape</span></code></pre></div></div>
+<div class="cell-output cell-output-display" data-execution_count="20">
+<pre><code>torch.Size([60000, 784])</code></pre>
+</div>
+</div>
+<div id="ca9f2332" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 构造模型输入对应的标签y</span></span>
+<span id="cb33-2"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 构建标签y有两种方案，与神经网络的建模相对应。</span></span>
+<span id="cb33-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#     1. 使用one-hot编码，将标签y编码成shape=[10]的一阶张量（向量），神经网络输出要做softmax归一化处理。</span></span>
+<span id="cb33-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#     2. 直接编码0-9对应的数字，神经网络输出保持Logits，不需要做softmax，损失函数使用交叉熵。</span></span>
+<span id="cb33-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 这里我们采用方案二</span></span>
+<span id="cb33-6">train_y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb33-7"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> i, path <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">enumerate</span>(training_paths):</span>
+<span id="cb33-8">    train_y.extend([i] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(path.ls()))</span>
+<span id="cb33-9"></span>
+<span id="cb33-10">train_y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tensor(train_y)</span>
+<span id="cb33-11">train_y.shape</span></code></pre></div></div>
+<div class="cell-output cell-output-display" data-execution_count="21">
+<pre><code>torch.Size([60000])</code></pre>
+</div>
+</div>
+<div id="69e13636" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 构造训练集dataloder</span></span>
+<span id="cb35-2">train_ds <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">zip</span>(train_x, train_y))</span>
+<span id="cb35-3">train_dl <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> DataLoader(train_ds, batch_size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">256</span>)</span></code></pre></div></div>
+</div>
+<div id="b90800d1" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 如法炮制测试集合的dataloder</span></span>
+<span id="cb36-2">testing_tensors <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [tensor(Image.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">open</span>(image)) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> path <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> testing_paths <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> image <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> path.ls()]</span>
+<span id="cb36-3">testing_stack <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.stack(testing_tensors).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>() <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">255</span></span>
+<span id="cb36-4">test_x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> testing_stack.view(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">28</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">28</span>)</span>
+<span id="cb36-5"></span>
+<span id="cb36-6">test_y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb36-7"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> i, path <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">enumerate</span>(testing_paths):</span>
+<span id="cb36-8">    test_y.extend([i] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(path.ls()))</span>
+<span id="cb36-9">test_y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tensor(test_y)</span>
+<span id="cb36-10"></span>
+<span id="cb36-11">test_ds <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">zip</span>(test_x, test_y))</span>
+<span id="cb36-12">test_dl <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> DataLoader(test_ds, batch_size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">256</span>)</span></code></pre></div></div>
+</div>
+<div id="5d0f8710" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1">dls <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> DataLoaders(train_dl, test_dl)</span></code></pre></div></div>
+</div>
+</section>
+<section id="初始化权重" class="level4">
+<h4 class="anchored" data-anchor-id="初始化权重">初始化权重</h4>
+<div id="eec760b5" class="cell" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 使用pytorch的nn.Sequential模块定义最简单的神经网络，由两层线性层、一层ReLU激活函数组成。</span></span>
+<span id="cb38-2"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 初始维度为28 * 28=784（每一张数据集图片由28 * 28的像素点组成），输出维度为10（分别代表0-9），中间层维度为30（中间层维度可以随意设置，表示神经网络可以捕获的特征数量）。</span></span>
+<span id="cb38-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 模型的权重由nn.Linear()随机初始化。</span></span>
+<span id="cb38-4"></span>
+<span id="cb38-5">simple_net <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.Sequential(</span>
+<span id="cb38-6">    nn.Linear(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">28</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">28</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">128</span>),</span>
+<span id="cb38-7">    nn.ReLU(),</span>
+<span id="cb38-8">    nn.Linear(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">128</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>)</span>
+<span id="cb38-9">)</span></code></pre></div></div>
+</div>
+</section>
+<section id="定义损失函数" class="level4">
+<h4 class="anchored" data-anchor-id="定义损失函数">定义损失函数</h4>
+<p>交叉熵损失函数：直接使用CrossEntropyLossFlat()函数即可，等同于nn.CrossEntropyLoss，区别在于CrossEntropyLossFlat会展平inputs和targets</p>
+</section>
+<section id="定义优化器" class="level4">
+<h4 class="anchored" data-anchor-id="定义优化器">定义优化器</h4>
+<p>优化器采用随机梯度下降SGD</p>
+</section>
+<section id="定义正确率指标" class="level4">
+<h4 class="anchored" data-anchor-id="定义正确率指标">定义正确率指标</h4>
+<div id="902d25a1" class="cell" data-execution_count="26">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> batch_accuracy(preds, targets):</span>
+<span id="cb39-2">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> (preds.argmax(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> targets).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>().mean()</span></code></pre></div></div>
+</div>
+</section>
+<section id="训练神经网络" class="level4">
+<h4 class="anchored" data-anchor-id="训练神经网络">训练神经网络</h4>
+<div id="68b7fbcb" class="cell" data-execution_count="27">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"></span>
+<span id="cb40-2">learn <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Learner(</span>
+<span id="cb40-3">    dls <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> dls,</span>
+<span id="cb40-4">    model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> simple_net,</span>
+<span id="cb40-5">    loss_func<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>CrossEntropyLossFlat(),</span>
+<span id="cb40-6">    opt_func<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>SGD,</span>
+<span id="cb40-7">    metrics<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>batch_accuracy</span>
+<span id="cb40-8">)</span>
+<span id="cb40-9"></span>
+<span id="cb40-10">learn.remove_cbs(ProgressCallback)</span></code></pre></div></div>
+<div class="cell-output cell-output-display" data-execution_count="27">
+<pre><code>&lt;fastai.learner.Learner at 0x2aa0ed05fd0&gt;</code></pre>
+</div>
+</div>
+<div id="3f394f92" class="cell" data-execution_count="28">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1">learn.fit_one_cycle(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">40</span>, lr_max<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[0, 2.058319330215454, 2.217005491256714, 0.1054999977350235, '00:00']
+[1, 1.026645541191101, 3.093644857406616, 0.10090000182390213, '00:00']
+[2, 0.46824803948402405, 3.1218841075897217, 0.10790000110864639, '00:00']
+[3, 0.2767549157142639, 3.022745132446289, 0.17020000517368317, '00:00']
+[4, 0.2017069160938263, 3.0426149368286133, 0.22300000488758087, '00:00']
+[5, 0.16536171734333038, 3.1070761680603027, 0.2531999945640564, '00:00']
+[6, 0.14760544896125793, 3.160271406173706, 0.27799999713897705, '00:00']
+[7, 0.13931012153625488, 3.1762616634368896, 0.29660001397132874, '00:00']
+[8, 0.1304607093334198, 3.268145799636841, 0.2971000075340271, '00:00']
+[9, 0.12770448625087738, 3.2473626136779785, 0.30469998717308044, '00:00']
+[10, 0.13348078727722168, 2.9868013858795166, 0.34529998898506165, '00:00']
+[11, 0.13116277754306793, 2.9267468452453613, 0.3483000099658966, '00:00']
+[12, 0.1418938934803009, 2.7756187915802, 0.3547999858856201, '00:00']
+[13, 0.14047884941101074, 2.686028242111206, 0.34880000352859497, '00:00']
+[14, 0.1492592990398407, 2.566951274871826, 0.3587999939918518, '00:00']
+[15, 0.14494456350803375, 2.585930824279785, 0.34380000829696655, '00:00']
+[16, 0.14443561434745789, 2.3903746604919434, 0.38370001316070557, '00:00']
+[17, 0.14076095819473267, 2.299257516860962, 0.40049999952316284, '00:00']
+[18, 0.1459321826696396, 2.113252639770508, 0.42570000886917114, '00:00']
+[19, 0.1465080976486206, 1.9186656475067139, 0.4675999879837036, '00:00']
+[20, 0.1467052400112152, 1.8600183725357056, 0.4738999903202057, '00:00']
+[21, 0.1455131471157074, 1.7872105836868286, 0.4810999929904938, '00:00']
+[22, 0.14577575027942657, 1.637719750404358, 0.49939998984336853, '00:00']
+[23, 0.14990916848182678, 1.477837085723877, 0.5246999859809875, '00:00']
+[24, 0.15500810742378235, 1.3052470684051514, 0.5654000043869019, '00:00']
+[25, 0.15911975502967834, 1.1460464000701904, 0.6098999977111816, '00:00']
+[26, 0.1634342521429062, 1.010521411895752, 0.6489999890327454, '00:00']
+[27, 0.16842171549797058, 0.9010326862335205, 0.6820999979972839, '00:00']
+[28, 0.1747148036956787, 0.7957713603973389, 0.7116000056266785, '00:00']
+[29, 0.1830490231513977, 0.691900908946991, 0.7461000084877014, '00:00']
+[30, 0.19352246820926666, 0.5899965167045593, 0.78329998254776, '00:00']
+[31, 0.2064102739095688, 0.4935455620288849, 0.8199999928474426, '00:00']
+[32, 0.22154438495635986, 0.407286673784256, 0.8560000061988831, '00:00']
+[33, 0.2384401112794876, 0.3356265425682068, 0.8860999941825867, '00:00']
+[34, 0.2557208836078644, 0.28089436888694763, 0.9089999794960022, '00:00']
+[35, 0.2705569863319397, 0.24455700814723969, 0.9248999953269958, '00:00']
+[36, 0.27901846170425415, 0.2253568172454834, 0.9315999746322632, '00:00']
+[37, 0.2801212668418884, 0.21798881888389587, 0.9340999722480774, '00:00']
+[38, 0.27724072337150574, 0.21609164774417877, 0.934499979019165, '00:00']
+[39, 0.27388298511505127, 0.21590690314769745, 0.934499979019165, '00:00']</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="加深网络" class="level2">
+<h2 class="anchored" data-anchor-id="加深网络">加深网络</h2>
+<div id="6401de8f" class="cell" data-execution_count="29">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1">simple_net2 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.Sequential(</span>
+<span id="cb44-2">    nn.Linear(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">28</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">28</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">128</span>),</span>
+<span id="cb44-3">    nn.ReLU(),</span>
+<span id="cb44-4">    nn.Linear(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">128</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">128</span>),</span>
+<span id="cb44-5">    nn.ReLU(),</span>
+<span id="cb44-6">    nn.Linear(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">128</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>)</span>
+<span id="cb44-7">)</span></code></pre></div></div>
+</div>
+<div id="de7f857f" class="cell" data-execution_count="30">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1">learn2 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Learner(</span>
+<span id="cb45-2">    dls <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> dls,</span>
+<span id="cb45-3">    model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> simple_net2,</span>
+<span id="cb45-4">    loss_func<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>CrossEntropyLossFlat(),</span>
+<span id="cb45-5">    opt_func<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>SGD,</span>
+<span id="cb45-6">    metrics<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>batch_accuracy</span>
+<span id="cb45-7">)</span>
+<span id="cb45-8"></span>
+<span id="cb45-9">learn2.remove_cbs(ProgressCallback)</span></code></pre></div></div>
+<div class="cell-output cell-output-display" data-execution_count="30">
+<pre><code>&lt;fastai.learner.Learner at 0x2aa0ebc6350&gt;</code></pre>
+</div>
+</div>
+<div id="45556fb7" class="cell" data-execution_count="31">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1">learn2.fit_one_cycle(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">40</span>, lr_max<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[0, 2.284194231033325, 2.2780888080596924, 0.10909999907016754, '00:00']
+[1, 1.7273132801055908, 3.121453285217285, 0.10090000182390213, '00:00']
+[2, 0.6533521413803101, 4.710193157196045, 0.10090000182390213, '00:00']
+[3, 0.3517478406429291, 4.200509071350098, 0.10300000011920929, '00:00']
+[4, 0.26247790455818176, 3.8570432662963867, 0.1111999973654747, '00:00']
+[5, 0.22667746245861053, 3.7390215396881104, 0.13210000097751617, '00:00']
+[6, 0.19849027693271637, 3.7495152950286865, 0.1736000031232834, '00:00']
+[7, 0.1698937714099884, 3.976940631866455, 0.1899999976158142, '00:00']
+[8, 0.16094760596752167, 3.9729621410369873, 0.24040000140666962, '00:00']
+[9, 0.15071767568588257, 4.124275207519531, 0.20829999446868896, '00:00']
+[10, 0.1586325764656067, 3.9294629096984863, 0.22370000183582306, '00:00']
+[11, 0.1524275243282318, 3.6151387691497803, 0.27469998598098755, '00:00']
+[12, 0.13830970227718353, 3.7923121452331543, 0.26330000162124634, '00:00']
+[13, 0.1439690738916397, 3.4316086769104004, 0.31200000643730164, '00:00']
+[14, 0.1358300894498825, 3.3017468452453613, 0.3206999897956848, '00:00']
+[15, 0.1349460333585739, 3.4888715744018555, 0.3122999966144562, '00:00']
+[16, 0.1303459256887436, 3.5109198093414307, 0.2890999913215637, '00:00']
+[17, 0.12825831770896912, 3.3352859020233154, 0.32919999957084656, '00:00']
+[18, 0.12744906544685364, 3.128218173980713, 0.3625999987125397, '00:00']
+[19, 0.13217177987098694, 2.9774820804595947, 0.38350000977516174, '00:00']
+[20, 0.13185277581214905, 2.9294333457946777, 0.38420000672340393, '00:00']
+[21, 0.12433288991451263, 2.8967883586883545, 0.4018000066280365, '00:00']
+[22, 0.1206083744764328, 2.7341668605804443, 0.4332999885082245, '00:00']
+[23, 0.13059327006340027, 2.306130886077881, 0.4700999855995178, '00:00']
+[24, 0.13621307909488678, 2.0357391834259033, 0.48420000076293945, '00:00']
+[25, 0.13968567550182343, 1.8700580596923828, 0.5041999816894531, '00:00']
+[26, 0.1441369503736496, 1.6961122751235962, 0.5260000228881836, '00:00']
+[27, 0.14897668361663818, 1.5259608030319214, 0.5483999848365784, '00:00']
+[28, 0.15509507060050964, 1.3486348390579224, 0.5794000029563904, '00:00']
+[29, 0.16277877986431122, 1.1601871252059937, 0.6193000078201294, '00:00']
+[30, 0.1735440194606781, 0.970603346824646, 0.6699000000953674, '00:00']
+[31, 0.1871323585510254, 0.7937489748001099, 0.7196000218391418, '00:00']
+[32, 0.2033500075340271, 0.6362507343292236, 0.7739999890327454, '00:00']
+[33, 0.22262418270111084, 0.5009270310401917, 0.8213000297546387, '00:00']
+[34, 0.24486522376537323, 0.38955897092819214, 0.8644000291824341, '00:00']
+[35, 0.26858794689178467, 0.30733853578567505, 0.8980000019073486, '00:00']
+[36, 0.28942427039146423, 0.25650855898857117, 0.9186999797821045, '00:00']
+[37, 0.2997584640979767, 0.23445925116539001, 0.928600013256073, '00:00']
+[38, 0.2956204414367676, 0.22947126626968384, 0.9305999875068665, '00:00']
+[39, 0.2885822057723999, 0.22912432253360748, 0.9309999942779541, '00:00']</code></pre>
+</div>
+</div>
+<p>可以看出，增加一层网络实际上并没有提高准确率，反而略微下降，一个原因是网络变深了但是参数量差别不大</p>
+</section>
+<section id="使用resnet18" class="level2">
+<h2 class="anchored" data-anchor-id="使用resnet18">使用RESNET18</h2>
+<div id="e275cb75" class="cell" data-execution_count="33">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1">path <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> untar_data(URLs.MNIST)</span></code></pre></div></div>
+</div>
+<div id="f205e407" class="cell" data-execution_count="34">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1">dls <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ImageDataLoaders.from_folder(path,train<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"training"</span>,valid<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"testing"</span>)</span></code></pre></div></div>
+</div>
+<div id="adc1e90f" class="cell" data-execution_count="35">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1">learn <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> vision_learner(dls, resnet18, pretrained<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>,</span>
+<span id="cb51-2">                    loss_func<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>F.cross_entropy, metrics<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>accuracy)</span>
+<span id="cb51-3">learn.remove_cbs(ProgressCallback)</span></code></pre></div></div>
+<div class="cell-output cell-output-display" data-execution_count="35">
+<pre><code>&lt;fastai.learner.Learner at 0x2aa2aea4410&gt;</code></pre>
+</div>
+</div>
+<div id="f155f00c" class="cell" data-execution_count="36">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1">learn.fit_one_cycle(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[0, 1.1184285879135132, 791.0833129882812, 0.8259999752044678, '00:34']
+[1, 0.929822564125061, 3.3093323707580566, 0.9657999873161316, '00:38']
+[2, 0.4890580475330353, 1.0338960886001587, 0.9674000144004822, '00:32']
+[3, 0.08392318338155746, 0.047650303691625595, 0.989799976348877, '00:31']
+[4, 0.026931514963507652, 0.021246496587991714, 0.9937999844551086, '00:31']</code></pre>
+</div>
+</div>
+<p>正确率直接飙到99.38%，Amazing！！！</p>
+</section>
+<section id="小结" class="level2">
+<h2 class="anchored" data-anchor-id="小结">小结</h2>
+<p>MNIST数据集的神经网络训练作为深度学习领域的HelloWorld，想要理解并跑通并不是一件简单的事。 正如Fastai创始人<code>Jeremy Howard</code>所说，要想深入深度学习领域，学习者必须保持坚韧。 比如对于我来说： 2小时的课程可能对应于视频课程看3遍，jupyter notebook材料看3遍，不计其数的查询与搜索，一次次的暂停课件并卡住，才堪堪理解并完成这篇博客。</p>
+<p>但是如你所见，最后模型的准确率是惊人的。基座模型71.63%-&gt;单层神经网络93.45%-&gt;resnet18 99.38%，而resnet18不过是一个2015年的早已过时的模型。 其中的每一步都环环相扣，然而这只是魔术，并不是魔法，一个人人都可以做到的魔术表演。</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<ol type="1">
+<li><a href="https://course.fast.ai/Lessons/lesson3.html">fastai对应课程链接</a></li>
+</ol>
+
+
+</section>
+
+ ]]></description>
+  <category>deep learning</category>
+  <category>fastai</category>
+  <guid>https://github.com/TheSecondStep/Quarto-Blog/posts/基于MNIST全量数据集的神经网络训练/</guid>
+  <pubDate>Fri, 30 Jan 2026 00:00:00 GMT</pubDate>
+  <media:content url="https://github.com/TheSecondStep/Quarto-Blog/posts/基于MNIST全量数据集的神经网络训练/images/index.jpg" medium="image" type="image/jpeg"/>
+</item>
 <item>
   <title>基于Quarto和GitHub Pages的个人博客网站搭建流程</title>
   <dc:creator>逃之夭夭 </dc:creator>
