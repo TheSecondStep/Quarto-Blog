@@ -2,26 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/CLAUDE.html</loc>
-    <lastmod>2026-02-12T03:30:14.423Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/TheSecondStep/Quarto-Blog/about.html</loc>
-    <lastmod>2026-02-12T03:30:14.424Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/TheSecondStep/Quarto-Blog/posts/Quarto个人博客搭建/index.html</loc>
-    <lastmod>2026-02-12T03:30:14.429Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/TheSecondStep/Quarto-Blog/index.html</loc>
-    <lastmod>2026-02-12T03:30:14.424Z</lastmod>
+    <lastmod>2026-02-12T03:39:15.793Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/posts/基于MNIST全量数据集的神经网络训练/index.html</loc>
-    <lastmod>2026-02-12T03:30:14.474Z</lastmod>
+    <lastmod>2026-02-12T03:39:15.843Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/TheSecondStep/Quarto-Blog/08_collab.html</loc>
-    <lastmod>2026-02-12T03:30:14.423Z</lastmod>
+    <loc>https://github.com/TheSecondStep/Quarto-Blog/index.html</loc>
+    <lastmod>2026-02-12T03:39:15.793Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/TheSecondStep/Quarto-Blog/posts/Quarto个人博客搭建/index.html</loc>
+    <lastmod>2026-02-12T03:39:15.798Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/TheSecondStep/Quarto-Blog/about.html</loc>
+    <lastmod>2026-02-12T03:39:15.793Z</lastmod>
   </url>
 </urlset>
