@@ -10,6 +10,8 @@ website:
       - about.qmd
       - icon: github
         href: https://github.com/TheSecondStep
+      - icon: rss
+        href: /index.xml
   comments:
     giscus:
       repo: TheSecondStep/Quarto-Blog
