@@ -9,7 +9,7 @@
 <link>https://github.com/TheSecondStep/Quarto-Blog/</link>
 <atom:link href="https://github.com/TheSecondStep/Quarto-Blog/index.xml" rel="self" type="application/rss+xml"/>
 <description>逃之夭夭&#39;s Blog</description>
-<generator>quarto-1.8.27</generator>
+<generator>quarto-1.9.36</generator>
 <lastBuildDate>Fri, 30 Jan 2026 00:00:00 GMT</lastBuildDate>
 <item>
   <title>基于MNIST全量数据集的神经网络训练</title>
