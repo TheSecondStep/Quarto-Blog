@@ -227,7 +227,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div>
 <pre class="mermaid mermaid-js">graph LR
   init --&gt; predict --&gt; loss --&gt; gradient --&gt; step --&gt; stop
-  step -- repeat --&gt; predict
+  step --&gt; repeat --&gt; predict
 </pre>
 </div>
 <p></p></figure><p></p>
@@ -296,7 +296,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="创建基座模型" class="level3">
 <h3 class="anchored" data-anchor-id="创建基座模型">创建基座模型</h3>
 <p>为了使后续的模型训练有参照，每一个神经网络训练之前都应该定义一个可以快速实现的基座模型。</p>
-<p>一个简单明了的思路是像素相似度。基于训练集图像计算出每个数字（0-9）的所有图像的像素平均值，分类时计算模型和验证集的L1范式（也成为平均绝对差）值，分类为差值最小的数字</p>
+<p>一个简单明了的思路是像素相似度。基于训练集图像计算出每个数字（0-9）的所有图像的像素平均值，分类时计算模型和验证集的MAE（也称作L1范式）值，分类为差值最小的数字</p>
 <p>由于该简单模型确定为像素平均值，因此不需要进行训练，步骤简化为：</p>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
@@ -384,10 +384,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>torch.Size([10, 28, 28])</code></pre>
 </div>
 </div>
-<div id="b9956941" class="cell" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">#定义损失函数</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mean_loss(preds, targets):</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (preds <span class="op">-</span> targets.unsqueeze(<span class="dv">1</span>)).<span class="bu">abs</span>().mean((<span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="dv">2</span>)).argmin(<span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="b9956941" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 定义基座模型的损失函数（像素相似度）</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co"># preds: 形状为 [10, 28, 28] 的预测张量（0-9的平均像素图）</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co"># targets: 测试集图像张量</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 步骤：</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   1. targets.unsqueeze(1): 扩展维度以便广播，形状变为 [N, 1, 28, 28]</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co">#   2. (preds - ...).abs(): 计算每张测试图与10个平均图的绝对差值（MAE/L1范式）</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co">#   3. .mean((-1, -2)): 对28x28像素维度取平均，得到每张图与每个数字的相似度分数</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co">#   4. .argmin(1): 取差值最小的数字索引，即预测结果</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mean_loss(preds, targets):</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (preds <span class="op">-</span> targets.unsqueeze(<span class="dv">1</span>)).<span class="bu">abs</span>().mean((<span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="dv">2</span>)).argmin(<span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="d535ee66" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 加载测试集</span></span>
