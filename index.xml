@@ -9,8 +9,176 @@
 <link>https://github.com/TheSecondStep/Quarto-Blog/</link>
 <atom:link href="https://github.com/TheSecondStep/Quarto-Blog/index.xml" rel="self" type="application/rss+xml"/>
 <description>逃之夭夭&#39;s Blog</description>
-<generator>quarto-1.9.36</generator>
-<lastBuildDate>Fri, 30 Jan 2026 00:00:00 GMT</lastBuildDate>
+<generator>quarto-1.9.37</generator>
+<lastBuildDate>Sun, 12 Apr 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>dict 子类的隐藏陷阱</title>
+  <dc:creator>逃之夭夭 </dc:creator>
+  <link>https://github.com/TheSecondStep/Quarto-Blog/posts/UserDict vs dict/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="userdict-vs-dict" class="level1">
+<h1>UserDict vs dict</h1>
+<blockquote class="blockquote">
+<p>dict 是高度优化的 C 语言实现，其内部包含一些”捷径”，使得子类化体验充满挫折且容易出 bug ———— 《Fluent Python》</p>
+</blockquote>
+<p>如果你只是想扩展标准字典而不影响其核心结构，直接继承 dict 完全没问题。但如果你想通过重写特殊方法来改变字典的核心行为，UserDict 才是你最好的选择。</p>
+<section id="一个简单示例" class="level2">
+<h2 class="anchored" data-anchor-id="一个简单示例">一个简单示例</h2>
+<div id="75008ee2" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">class</span> MyDict(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">dict</span>):</span>
+<span id="cb1-2">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__setitem__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, key, value):</span>
+<span id="cb1-3">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Setting </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>key<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>value<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 这个不会被调用</span></span>
+<span id="cb1-4">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">super</span>().<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__setitem__</span>(key, value)</span></code></pre></div></div>
+</div>
+<div id="6831c8f2" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">d <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> MyDict(a<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span></code></pre></div></div>
+</div>
+<div id="f3e603ff" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> collections <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> UserDict</span>
+<span id="cb3-2"></span>
+<span id="cb3-3"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">class</span> LoggingDict(UserDict):</span>
+<span id="cb3-4">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__setitem__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, key, value):</span>
+<span id="cb3-5">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Setting </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>key<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>value<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb3-6">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">super</span>().<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__setitem__</span>(key, value)</span></code></pre></div></div>
+</div>
+<div id="5944a05d" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">d <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> LoggingDict(a<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Setting a = 1</code></pre>
+</div>
+</div>
+</section>
+<section id="为什么" class="level2">
+<h2 class="anchored" data-anchor-id="为什么">为什么</h2>
+<p>因为 <code>dict</code> 是用 <strong>C 语言</strong>实现的，它的 <code>__init__</code>、<code>update</code> 等方法在 C 层直接操作底层哈希表内存，<strong>不经过 Python 的方法查找机制<a href="https://docs.python.org/3/howto/mro.html">MRO</a></strong>，所以你重写的 <code>__setitem__</code> 会被绕过。</p>
+<p>而 <code>UserDict</code> 是纯 Python 实现，数据存储在 <code>self.data</code>（一个普通 dict）里，所有读写操作都通过 Python 方法调用，因此重写的方法<strong>一定会被执行</strong>。</p>
+</section>
+<section id="userxxx" class="level2">
+<h2 class="anchored" data-anchor-id="userxxx">Userxxx</h2>
+<p>同理，<code>collections</code> 模块中还有以下三个 Userxxx 类，它们都避免了直接继承内置类型时的陷阱：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>类</th>
+<th>替代继承</th>
+<th>数据存储</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>UserDict</code></td>
+<td><code>dict</code></td>
+<td><code>self.data</code></td>
+</tr>
+<tr class="even">
+<td><code>UserList</code></td>
+<td><code>list</code></td>
+<td><code>self.data</code></td>
+</tr>
+<tr class="odd">
+<td><code>UserString</code></td>
+<td><code>str</code></td>
+<td><code>self.data</code>（字符串）</td>
+</tr>
+</tbody>
+</table>
+<p>三者设计哲学一致：用 <code>self.data</code> 包装底层数据，所有操作都走 Python 方法，子类可以安全重写任意方法。</p>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>python</category>
+  <guid>https://github.com/TheSecondStep/Quarto-Blog/posts/UserDict vs dict/</guid>
+  <pubDate>Sun, 12 Apr 2026 00:00:00 GMT</pubDate>
+  <media:content url="https://github.com/TheSecondStep/Quarto-Blog/posts/UserDict vs dict/images/index.jpg" medium="image" type="image/jpeg"/>
+</item>
 <item>
   <title>基于MNIST全量数据集的神经网络训练</title>
   <dc:creator>逃之夭夭 </dc:creator>
