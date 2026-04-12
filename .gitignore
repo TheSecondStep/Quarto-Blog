@@ -3,3 +3,4 @@
 /.venv
 **/*.quarto_ipynb
 /.claude/
+/.vscode
