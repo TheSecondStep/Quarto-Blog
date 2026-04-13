@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Attention is all you need",
     "section": "",
-    "text": "dict 子类的隐藏陷阱\n\n\n\npython\n\n\n\n\n\n\n\n\n\nApr 12, 2026\n\n\n逃之夭夭\n\n\n\n\n\n\n\n\n\n\n\n\n基于MNIST全量数据集的神经网络训练\n\n\n\ndeep learning\n\nfastai\n\n\n\n\n\n\n\n\n\nJan 30, 2026\n\n\n逃之夭夭\n\n\n\n\n\n\n\n\n\n\n\n\n基于Quarto和GitHub Pages的个人博客网站搭建流程\n\n\n\ntools\n\n\n\n\n\n\n\n\n\nJan 25, 2026\n\n\n逃之夭夭\n\n\n\n\n\nNo matching items"
+    "text": "Tokenizer：BPE、WordPiece与Unigram分词算法\n\n\n\ntokenizer\n\ndeep learning\n\nllm\n\n\n\n\n\n\n\n\n\nApr 13, 2026\n\n\n逃之夭夭\n\n\n\n\n\n\n\n\n\n\n\n\ndict 子类的隐藏陷阱\n\n\n\npython\n\n\n\n\n\n\n\n\n\nApr 12, 2026\n\n\n逃之夭夭\n\n\n\n\n\n\n\n\n\n\n\n\n基于MNIST全量数据集的神经网络训练\n\n\n\ndeep learning\n\nfastai\n\n\n\n\n\n\n\n\n\nJan 30, 2026\n\n\n逃之夭夭\n\n\n\n\n\n\n\n\n\n\n\n\n基于Quarto和GitHub Pages的个人博客网站搭建流程\n\n\n\ntools\n\n\n\n\n\n\n\n\n\nJan 25, 2026\n\n\n逃之夭夭\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/基于MNIST全量数据集的神经网络训练/index.html",
@@ -61,6 +61,55 @@
     "title": "基于MNIST全量数据集的神经网络训练",
     "section": "References",
     "text": "References\n\nfastai对应课程链接"
+  },
+  {
+    "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html",
+    "href": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html",
+    "title": "Tokenizer：BPE、WordPiece与Unigram分词算法",
+    "section": "",
+    "text": "“我的语言的边界，就是我的世界的边界。” ———— 路德维希·维特根斯坦\n语言模型在理解世界之前，首先要学会切分语言——而这件事远比想象中复杂。\n“hugging” 该拆成 hug + ##ging 还是 hu + ##gging？ 中文的”自然语言处理”又该怎么断？\n这些问题的答案，取决于分词器（Tokenizer）的算法选择。 现代 NLP 模型普遍采用子词（Subword）分词策略，在字符级和词表级之间寻找平衡。\n目前主流的三种子词算法是：\n它们的训练哲学截然相反：BPE 和 WordPiece 从小到大合并，Unigram 从大到小裁剪。\n在了解三种算法之前，先从高层视角概览分词流程的步骤。"
+  },
+  {
+    "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#归一化和预分词",
+    "href": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#归一化和预分词",
+    "title": "Tokenizer：BPE、WordPiece与Unigram分词算法",
+    "section": "归一化和预分词",
+    "text": "归一化和预分词\n\n\n\n\n各个步骤因分词算法各异\n\n\nNormalization：对文本执行的任何清理操作，包括去除重音字符、空格或将文本转化为小写等规则\nPre-tokenization：对文本预分词，包括基于空格或者标点符号等规则\nPostprocessor：添加特殊token字符等"
+  },
+  {
+    "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#bpebyte-pair-encoding",
+    "href": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#bpebyte-pair-encoding",
+    "title": "Tokenizer：BPE、WordPiece与Unigram分词算法",
+    "section": "BPE（Byte-Pair Encoding）",
+    "text": "BPE（Byte-Pair Encoding）\n一句话：反复找最频繁的相邻对，合并它，记下来。\n从字符出发，每一轮找语料中出现最频繁的相邻符号对并合并， 合并规则按顺序记录——推理时，新词也按同样的顺序”回放”这些规则。\n\nByte-level BPE\n普通BPE以字符为最小单元，遇到词表外的字符只能输出[UNK]。 GPT-2改用字节作为最小单元——256个字节覆盖一切Unicode，任何文本都能无损编码，彻底消灭了[UNK]。\n\n\n普通 BPE： “é” 不在词表 → [UNK]\n\n\nByte-level： “é” → 字节 0xC3 0xA9 → 合并为 token Ġé ✅"
+  },
+  {
+    "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#wordpiece",
+    "href": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#wordpiece",
+    "title": "Tokenizer：BPE、WordPiece与Unigram分词算法",
+    "section": "WordPiece",
+    "text": "WordPiece\n一句话：合并”在一起比分开更意外”的符号对。\n与 BPE 的区别在于合并标准——不选最高频的对， 而是选互信息最高的对：两个符号单独出现很少， 但总是结伴出现，才值得合并。\n\\[\\text{score}(A, B) = \\frac{\\text{freq}(AB)}{\\text{freq}(A) \\times \\text{freq}(B)}\\]\n\n\n同样的语料，两种候选合并对：\n\n\n&lt;code&gt;(e, d)&lt;/code&gt; → freq=100，但 e 和 d 各自也很常见\n→ score &lt;b style=\"color:#e05252\"&gt;低&lt;/b&gt;\n\n\n&lt;code&gt;(##ing, ly)&lt;/code&gt; → freq=40，但各自单独几乎不出现\n→ score &lt;b style=\"color:#2a9d5c\"&gt;高&lt;/b&gt; ✅\n\n\n推理时不用合并规则，只用词表：从词头找最长匹配子词， 切不开的整词直接标为 [UNK]。"
+  },
+  {
+    "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#unigram",
+    "href": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#unigram",
+    "title": "Tokenizer：BPE、WordPiece与Unigram分词算法",
+    "section": "Unigram",
+    "text": "Unigram\n一句话：从大词表开始，删去”删了也没太大损失”的 token。\n每个 token 被赋予一个概率（由频率估计）， 一种分词方案的”好坏”用概率之积衡量：\n\\[P(\\text{方案}) = \\prod_{i} P(t_i)\\]\n每轮评估：如果删掉某个 token，语料的总 loss 增加多少？ 增加越少，说明它越可有可无，优先删除。\n\n\n\n\n\ngraph LR\n  A[\"大词表\\n(~1000 tokens)\"] --&gt;|\"删除贡献最小的 20%\"| B[\"缩小词表\"]\n  B --&gt;|\"再删 20%\"| C[\"...\"]\n  C --&gt;|\"达到目标大小\"| D[\"最终词表\\n(保留基础字符)\"]\n\n\n\n\n\n\n推理时用 Viterbi 算法在所有可能分词路径中找概率最大的一条。"
+  },
+  {
+    "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#结束语",
+    "href": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#结束语",
+    "title": "Tokenizer：BPE、WordPiece与Unigram分词算法",
+    "section": "结束语",
+    "text": "结束语\nBERT 上线时上下文窗口只有 512 token，如今 LLM 动辄支持 200K+，vocab_size 也从 3 万膨胀至 10 万+。\n词表越大，同样的文本切出的 token 越少，模型能”看”得越远——分词器的设计，从一开始就在影响模型的上限。\n从 BPE 的贪心合并，到 WordPiece 的互信息驱动，再到 Unigram 的概率裁剪，三种算法殊途同归：用最少的 token，表达最完整的语义。"
+  },
+  {
+    "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#references",
+    "href": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#references",
+    "title": "Tokenizer：BPE、WordPiece与Unigram分词算法",
+    "section": "References",
+    "text": "References\n\nHugging Face NLP Course - Chapter 6"
   },
   {
     "objectID": "posts/Quarto个人博客搭建/index.html",
