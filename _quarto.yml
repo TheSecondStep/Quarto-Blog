@@ -6,6 +6,10 @@ website:
   site-url: https://github.com/TheSecondStep/Quarto-Blog # you must change this appropriately for RSS feeds to work properly
   title: "逃之夭夭 Blog"
   navbar:
+    left:
+      - icon: book
+        text: "AI术语表"
+        href: ai-glossary/index.qmd
     right:
       - about.qmd
       - icon: github
