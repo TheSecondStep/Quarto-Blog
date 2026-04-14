@@ -7,6 +7,146 @@
     "text": "Tokenizer：BPE、WordPiece与Unigram分词算法\n\n\n\ntokenizer\n\ndeep learning\n\nllm\n\n\n\n\n\n\n\n\n\nApr 13, 2026\n\n\n逃之夭夭\n\n\n\n\n\n\n\n\n\n\n\n\ndict 子类的隐藏陷阱\n\n\n\npython\n\n\n\n\n\n\n\n\n\nApr 12, 2026\n\n\n逃之夭夭\n\n\n\n\n\n\n\n\n\n\n\n\n基于MNIST全量数据集的神经网络训练\n\n\n\ndeep learning\n\nfastai\n\n\n\n\n\n\n\n\n\nJan 30, 2026\n\n\n逃之夭夭\n\n\n\n\n\n\n\n\n\n\n\n\n基于Quarto和GitHub Pages的个人博客网站搭建流程\n\n\n\ntools\n\n\n\n\n\n\n\n\n\nJan 25, 2026\n\n\n逃之夭夭\n\n\n\n\n\nNo matching items"
   },
   {
+    "objectID": "ai-glossary/terms/cross-entropy-loss.html",
+    "href": "ai-glossary/terms/cross-entropy-loss.html",
+    "title": "交叉熵损失函数",
+    "section": "",
+    "text": "多分类任务的标签通常是独热编码，可以看作一种概率分布。交叉熵的作用就是衡量模型预测的概率分布与这个真实分布有多不同——差距越大，损失越大；完全吻合时为 0。\n真实分布为独热编码，交叉熵公式为（详细定义及完整公式，请参照扩展阅读）： \\[H = -\\log(p_{\\text{真实类别}})\\]\n其中 \\(p_{\\text{真实类别}}\\) 是模型对真实类别预测的概率，通过对模型实际输出的logits做一次softmax得到。"
+  },
+  {
+    "objectID": "ai-glossary/terms/cross-entropy-loss.html#示例",
+    "href": "ai-glossary/terms/cross-entropy-loss.html#示例",
+    "title": "交叉熵损失函数",
+    "section": "示例",
+    "text": "示例\n三分类问题（猫、狗、鸟），真实标签是”猫”（独热编码 [1, 0, 0]）。\n模型 A 的预测（已softmax）： [0.7, 0.2, 0.1]\n\\[H_A = -\\log(0.7) \\approx 0.36\\]\n模型 B 的预测（已softmax）： [0.1, 0.1, 0.8]\n\\[H_B = -\\log(0.1) \\approx 2.30\\]\n模型 A 给”猫”分配了更高的概率，损失更低，说明它预测得更好。\n\n\n\n\n\n\nTip扩展阅读\n\n\n\n\n\nVisual Information Theory：用可视化方式从信息论角度解释熵、交叉熵和 KL 散度。"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this blog"
+  },
+  {
+    "objectID": "posts/UserDict vs dict/index.html",
+    "href": "posts/UserDict vs dict/index.html",
+    "title": "dict 子类的隐藏陷阱",
+    "section": "",
+    "text": "dict 是高度优化的 C 语言实现，其内部包含一些”捷径”，使得子类化体验充满挫折且容易出 bug ———— 《Fluent Python》\n\n如果你只是想扩展标准字典而不影响其核心结构，直接继承 dict 完全没问题。但如果你想通过重写特殊方法来改变字典的核心行为，UserDict 才是你最好的选择。\n\n\n\nclass MyDict(dict):\n    def __setitem__(self, key, value):\n        print(f\"Setting {key} = {value}\")  # 这个不会被调用\n        super().__setitem__(key, value)\n\n\nd = MyDict(a=1)\n\n\nfrom collections import UserDict\n\nclass LoggingDict(UserDict):\n    def __setitem__(self, key, value):\n        print(f\"Setting {key} = {value}\")\n        super().__setitem__(key, value)\n\n\nd = LoggingDict(a=1)\n\nSetting a = 1\n\n\n\n\n\n因为 dict 是用 C 语言实现的，它的 __init__、update 等方法在 C 层直接操作底层哈希表内存，不经过 Python 的方法查找机制MRO，所以你重写的 __setitem__ 会被绕过。\n而 UserDict 是纯 Python 实现，数据存储在 self.data（一个普通 dict）里，所有读写操作都通过 Python 方法调用，因此重写的方法一定会被执行。\n\n\n\n同理，collections 模块中还有以下三个 Userxxx 类，它们都避免了直接继承内置类型时的陷阱：\n\n\n\n类\n替代继承\n数据存储\n\n\n\n\nUserDict\ndict\nself.data\n\n\nUserList\nlist\nself.data\n\n\nUserString\nstr\nself.data（字符串）\n\n\n\n三者设计哲学一致：用 self.data 包装底层数据，所有操作都走 Python 方法，子类可以安全重写任意方法。"
+  },
+  {
+    "objectID": "posts/UserDict vs dict/index.html#一个简单示例",
+    "href": "posts/UserDict vs dict/index.html#一个简单示例",
+    "title": "dict 子类的隐藏陷阱",
+    "section": "",
+    "text": "class MyDict(dict):\n    def __setitem__(self, key, value):\n        print(f\"Setting {key} = {value}\")  # 这个不会被调用\n        super().__setitem__(key, value)\n\n\nd = MyDict(a=1)\n\n\nfrom collections import UserDict\n\nclass LoggingDict(UserDict):\n    def __setitem__(self, key, value):\n        print(f\"Setting {key} = {value}\")\n        super().__setitem__(key, value)\n\n\nd = LoggingDict(a=1)\n\nSetting a = 1"
+  },
+  {
+    "objectID": "posts/UserDict vs dict/index.html#为什么",
+    "href": "posts/UserDict vs dict/index.html#为什么",
+    "title": "dict 子类的隐藏陷阱",
+    "section": "",
+    "text": "因为 dict 是用 C 语言实现的，它的 __init__、update 等方法在 C 层直接操作底层哈希表内存，不经过 Python 的方法查找机制MRO，所以你重写的 __setitem__ 会被绕过。\n而 UserDict 是纯 Python 实现，数据存储在 self.data（一个普通 dict）里，所有读写操作都通过 Python 方法调用，因此重写的方法一定会被执行。"
+  },
+  {
+    "objectID": "posts/UserDict vs dict/index.html#userxxx",
+    "href": "posts/UserDict vs dict/index.html#userxxx",
+    "title": "dict 子类的隐藏陷阱",
+    "section": "",
+    "text": "同理，collections 模块中还有以下三个 Userxxx 类，它们都避免了直接继承内置类型时的陷阱：\n\n\n\n类\n替代继承\n数据存储\n\n\n\n\nUserDict\ndict\nself.data\n\n\nUserList\nlist\nself.data\n\n\nUserString\nstr\nself.data（字符串）\n\n\n\n三者设计哲学一致：用 self.data 包装底层数据，所有操作都走 Python 方法，子类可以安全重写任意方法。"
+  },
+  {
+    "objectID": "posts/Quarto个人博客搭建/index.html",
+    "href": "posts/Quarto个人博客搭建/index.html",
+    "title": "基于Quarto和GitHub Pages的个人博客网站搭建流程",
+    "section": "",
+    "text": "基于Github Actions自动渲染Quarto博客\n本篇博客旨在提供完整的基于Quarto和GitHub Pages的个人博客网站搭建流程，帮助读者快速搭建个人博客系统。"
+  },
+  {
+    "objectID": "posts/Quarto个人博客搭建/index.html#创建quarto-blog项目",
+    "href": "posts/Quarto个人博客搭建/index.html#创建quarto-blog项目",
+    "title": "基于Quarto和GitHub Pages的个人博客网站搭建流程",
+    "section": "创建Quarto Blog项目",
+    "text": "创建Quarto Blog项目\n\n打开cursor命令面板，输入Quarto:Create Project创建项目\n\n选择Blog Project\n\n选择一个文件夹作为博客项目的根目录\n\n为博客项目起名\n\nquarto将会创建默认配置以支持博客网站功能\n\n点击右上角“预览”按钮，quarto将为你渲染博客网站\n\n\n这是在入门博客项目中创建的关键文件摘要：\n\n\n\n文件\n描述\n\n\n\n\n_quarto.yml\nQuarto 项目文件\n\n\nindex.qmd\n博客主页\n\n\nabout.qmd\n关于页面\n\n\nposts/\n包含文章的目录\n\n\nposts/_metadata.yml\nposts 的共享选项\n\n\nstyles.css\n网站的定制 CSS\n\n\n\n主页预览界面"
+  },
+  {
+    "objectID": "posts/Quarto个人博客搭建/index.html#项目文件介绍",
+    "href": "posts/Quarto个人博客搭建/index.html#项目文件介绍",
+    "title": "基于Quarto和GitHub Pages的个人博客网站搭建流程",
+    "section": "项目文件介绍",
+    "text": "项目文件介绍\n\n主页\n主页是关于posts目录下所有博客的文章列表，如主页预览界面所示。\n源代码：\n---\ntitle: \"blog_tutorial\"\nlisting:\n  contents: posts\n  feed: true\n  sort: \"date desc\"\n  type: default\n  categories: true\n  sort-ui: false\n  filter-ui: false\npage-layout: full\ntitle-block-banner: true\n---\n\n\n\n字段\n描述\n\n\n\n\ntitle\n标题\n\n\ncategories\n开启博客分类\n\n\n\n\nCategories（分类）\ncategories: true表示配置为启用分类，这些分类显示在主页的右侧边缘。\n分类从包含在列表中的文档的前置内容中读取。例如，这里是一个包含分类的样本帖子元数据：\n---\ntitle: \"Post With Code\"\ndescription: \"Post description\"\nauthor: \"Fizz McPhee\"\ndate: \"5/22/2021\"\ncategories:\n  - news\n  - code\n  - analysis\n---\n\n\n关于页面\nabout.qmd包含有关博客及其作者的更多信息。\nabout.qmd源代码可能的样子：\n---\ntitle: \"About\"\nimage: profile.jpg\nabout:\n  template: jolla\n  links:\n    - icon: twitter\n      text: Twitter\n      href: https://twitter.com\n    - icon: linkedin\n      text: LinkedIn\n      href: https://linkedin.com\n    - icon: github\n      text: Github\n      href: https://github.com\n---\n\nAbout this blog\n\n\nposts文件夹\n构成博客内容的帖子位于posts目录中。\n通过在posts内创建一个子目录，并向该目录添加一个index.ipynb（或是 index.qmd）文件来为你的博客添加一篇新帖子。这个文件就是新的博客帖子，当你渲染(quarto render)它时，博客主页将自动更新，在列表顶部包含最新的帖子。"
+  },
+  {
+    "objectID": "posts/Quarto个人博客搭建/index.html#发布publishing",
+    "href": "posts/Quarto个人博客搭建/index.html#发布publishing",
+    "title": "基于Quarto和GitHub Pages的个人博客网站搭建流程",
+    "section": "发布（Publishing）",
+    "text": "发布（Publishing）\n有多种方式发布Quarto博客。本文仅介绍基于GitHub Action的GitHub Pages发布方式。\n\n在github创建新仓库\n\n\n\n本地项目初始化并关联github仓库\n\n创建README.md文件，内容为# 你的仓库名\n创建.gitignore文件\n\n/.quarto/\n/_site/\n\n修改_quarto.yml中site-url为你的仓库地址\n提交修改并关联远端仓库\n\ngit init\ngit add .\ngit commit -m \"first commit\"\ngit branch -M main\ngit remote add origin git@github.com:TheSecondStep/quarto-blog-tutorial.git\ngit push -u origin main\n本地执行一次命令行quarto publish gh-pages quarto将为你创建gh-pages分支，用于GitHub Pages部署网站使用。\n部署GitHub Action GitHub Action可以支持在main分支修改上传代码到github仓库后，自动触发工作流，渲染博客网站并更新。\n创建.github/workflows/publish.yml，内容如下\non:\n  workflow_dispatch:\n  push:\n    branches: main\n\nname: Quarto Publish\n\njobs:\n  build-deploy:\n    runs-on: ubuntu-latest\n    permissions:\n      contents: write\n    steps:\n      - name: Check out repository\n        uses: actions/checkout@v4\n\n      - name: Set up Quarto\n        uses: quarto-dev/quarto-actions/setup@v2\n\n      - name: Render and Publish\n        uses: quarto-dev/quarto-actions/publish@v2\n        with:\n          target: gh-pages\n        env:\n          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}\n在github仓库设置的Actions部分的Workflow permissions勾选Read and write permissions。\n推送上述修改到github，后续只要手动修改博客并推送到main分支，将自动触发GitHub Action渲染网站。\n\n\n\n执行代码\nGitHub Action也支持配置自动执行代码，来作为作为网站渲染的一部分。\n\n💡 确保你的代码能够在GitHub Action中执行成功的最佳实践是通过虚拟环境管理，如venv\n本文以uv管理venv虚拟环境为例，确保你的本地环境已经通过虚拟环境管理python代码且同步到GitHub\n\n修改publish.yml，然后推送到远端分支\non:\n  workflow_dispatch:\n  push:\n    branches: main\n\nname: Quarto Publish\n\njobs:\n  build-deploy:\n    runs-on: ubuntu-latest\n    permissions:\n      contents: write\n    steps:\n      - name: Check out repository\n        uses: actions/checkout@v4\n\n      - name: Set up Quarto\n        uses: quarto-dev/quarto-actions/setup@v2\n\n      - name: Install uv\n        uses: astral-sh/setup-uv@v5\n        with:\n          enable-cache: true\n          python-version: '3.13' #你的虚拟环境的python版本\n\n      - name: Install Dependencies\n        run: |\n          uv sync\n\n      - name: Render and Publish\n        uses: quarto-dev/quarto-actions/publish@v2\n        with:\n          target: gh-pages\n        env:\n          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}\n          QUARTO_PYTHON: .venv/bin/python"
+  },
+  {
+    "objectID": "posts/Quarto个人博客搭建/index.html#添加评论区",
+    "href": "posts/Quarto个人博客搭建/index.html#添加评论区",
+    "title": "基于Quarto和GitHub Pages的个人博客网站搭建流程",
+    "section": "添加评论区",
+    "text": "添加评论区\n\n若思想没有回响，文字便只是一场永无止境的独白；评论区并非点缀，而是博客得以呼吸的肺叶。\n\n\n登录https://giscus.app/zh-CN 并根据指引操作， giscus是利用GitHub Discussions实现的评论系统，天然与我们这套基于Github的博客系统适配。\n然后我们会看到类似这么一段配置\n\n修改_quarto.yml，加上对应配置\n\n上传所有修改，我们的网站就支持评论功能了"
+  },
+  {
+    "objectID": "posts/Quarto个人博客搭建/index.html#结语",
+    "href": "posts/Quarto个人博客搭建/index.html#结语",
+    "title": "基于Quarto和GitHub Pages的个人博客网站搭建流程",
+    "section": "结语",
+    "text": "结语\n至此，基于Quarto的个人网站已经部署上线，支持通过GitHub Pages访问，通过GitHub Action自动化渲染。\n如果你在实际操作中遇到任何问题，欢迎在评论区留言。"
+  },
+  {
+    "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html",
+    "href": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html",
+    "title": "Tokenizer：BPE、WordPiece与Unigram分词算法",
+    "section": "",
+    "text": "“我的语言的边界，就是我的世界的边界。” ———— 路德维希·维特根斯坦\n语言模型在理解世界之前，首先要学会切分语言——而这件事远比想象中复杂。\n“hugging” 该拆成 hug + ##ging 还是 hu + ##gging？ 中文的”自然语言处理”又该怎么断？\n这些问题的答案，取决于分词器（Tokenizer）的算法选择。 现代 NLP 模型普遍采用子词（Subword）分词策略，在字符级和词表级之间寻找平衡。\n目前主流的三种子词算法是：\n它们的训练哲学截然相反：BPE 和 WordPiece 从小到大合并，Unigram 从大到小裁剪。\n在了解三种算法之前，先从高层视角概览分词流程的步骤。"
+  },
+  {
+    "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#归一化和预分词",
+    "href": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#归一化和预分词",
+    "title": "Tokenizer：BPE、WordPiece与Unigram分词算法",
+    "section": "归一化和预分词",
+    "text": "归一化和预分词\n\n\n\n\n各个步骤因分词算法各异\n\n\nNormalization：对文本执行的任何清理操作，包括去除重音字符、空格或将文本转化为小写等规则\nPre-tokenization：对文本预分词，包括基于空格或者标点符号等规则\nPostprocessor：添加特殊token字符等"
+  },
+  {
+    "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#bpebyte-pair-encoding",
+    "href": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#bpebyte-pair-encoding",
+    "title": "Tokenizer：BPE、WordPiece与Unigram分词算法",
+    "section": "BPE（Byte-Pair Encoding）",
+    "text": "BPE（Byte-Pair Encoding）\n一句话：反复找最频繁的相邻对，合并它，记下来。\n从字符出发，每一轮找语料中出现最频繁的相邻符号对并合并， 合并规则按顺序记录——推理时，新词也按同样的顺序”回放”这些规则。\n\nByte-level BPE\n普通BPE以字符为最小单元，遇到词表外的字符只能输出[UNK]。 GPT-2改用字节作为最小单元——256个字节覆盖一切Unicode，任何文本都能无损编码，彻底消灭了[UNK]。\n\n\n普通 BPE： “é” 不在词表 → [UNK]\n\n\nByte-level： “é” → 字节 0xC3 0xA9 → 合并为 token Ġé ✅"
+  },
+  {
+    "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#wordpiece",
+    "href": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#wordpiece",
+    "title": "Tokenizer：BPE、WordPiece与Unigram分词算法",
+    "section": "WordPiece",
+    "text": "WordPiece\n一句话：合并”在一起比分开更意外”的符号对。\n与 BPE 的区别在于合并标准——不选最高频的对， 而是选互信息最高的对：两个符号单独出现很少， 但总是结伴出现，才值得合并。\n\\[\\text{score}(A, B) = \\frac{\\text{freq}(AB)}{\\text{freq}(A) \\times \\text{freq}(B)}\\]\n\n\n同样的语料，两种候选合并对：\n\n\n&lt;code&gt;(e, d)&lt;/code&gt; → freq=100，但 e 和 d 各自也很常见\n→ score &lt;b style=\"color:#e05252\"&gt;低&lt;/b&gt;\n\n\n&lt;code&gt;(##ing, ly)&lt;/code&gt; → freq=40，但各自单独几乎不出现\n→ score &lt;b style=\"color:#2a9d5c\"&gt;高&lt;/b&gt; ✅\n\n\n推理时不用合并规则，只用词表：从词头找最长匹配子词， 切不开的整词直接标为 [UNK]。"
+  },
+  {
+    "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#unigram",
+    "href": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#unigram",
+    "title": "Tokenizer：BPE、WordPiece与Unigram分词算法",
+    "section": "Unigram",
+    "text": "Unigram\n一句话：从大词表开始，删去”删了也没太大损失”的 token。\n每个 token 被赋予一个概率（由频率估计）， 一种分词方案的”好坏”用概率之积衡量：\n\\[P(\\text{方案}) = \\prod_{i} P(t_i)\\]\n每轮评估：如果删掉某个 token，语料的总 loss 增加多少？ 增加越少，说明它越可有可无，优先删除。\n\n\n\n\n\ngraph LR\n  A[\"大词表\\n(~1000 tokens)\"] --&gt;|\"删除贡献最小的 20%\"| B[\"缩小词表\"]\n  B --&gt;|\"再删 20%\"| C[\"...\"]\n  C --&gt;|\"达到目标大小\"| D[\"最终词表\\n(保留基础字符)\"]\n\n\n\n\n\n\n推理时用 Viterbi 算法在所有可能分词路径中找概率最大的一条。"
+  },
+  {
+    "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#结束语",
+    "href": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#结束语",
+    "title": "Tokenizer：BPE、WordPiece与Unigram分词算法",
+    "section": "结束语",
+    "text": "结束语\nBERT 上线时上下文窗口只有 512 token，如今 LLM 动辄支持 200K+，vocab_size 也从 3 万膨胀至 10 万+。\n词表越大，同样的文本切出的 token 越少，模型能”看”得越远——分词器的设计，从一开始就在影响模型的上限。\n从 BPE 的贪心合并，到 WordPiece 的互信息驱动，再到 Unigram 的概率裁剪，三种算法殊途同归：用最少的 token，表达最完整的语义。"
+  },
+  {
+    "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#references",
+    "href": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#references",
+    "title": "Tokenizer：BPE、WordPiece与Unigram分词算法",
+    "section": "References",
+    "text": "References\n\nHugging Face NLP Course - Chapter 6"
+  },
+  {
     "objectID": "posts/基于MNIST全量数据集的神经网络训练/index.html",
     "href": "posts/基于MNIST全量数据集的神经网络训练/index.html",
     "title": "基于MNIST全量数据集的神经网络训练",
@@ -63,129 +203,17 @@
     "text": "References\n\nfastai对应课程链接"
   },
   {
-    "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html",
-    "href": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html",
-    "title": "Tokenizer：BPE、WordPiece与Unigram分词算法",
+    "objectID": "ai-glossary/terms/one-hot-encoding.html",
+    "href": "ai-glossary/terms/one-hot-encoding.html",
+    "title": "独热编码 (One-Hot Encoding)",
     "section": "",
-    "text": "“我的语言的边界，就是我的世界的边界。” ———— 路德维希·维特根斯坦\n语言模型在理解世界之前，首先要学会切分语言——而这件事远比想象中复杂。\n“hugging” 该拆成 hug + ##ging 还是 hu + ##gging？ 中文的”自然语言处理”又该怎么断？\n这些问题的答案，取决于分词器（Tokenizer）的算法选择。 现代 NLP 模型普遍采用子词（Subword）分词策略，在字符级和词表级之间寻找平衡。\n目前主流的三种子词算法是：\n它们的训练哲学截然相反：BPE 和 WordPiece 从小到大合并，Unigram 从大到小裁剪。\n在了解三种算法之前，先从高层视角概览分词流程的步骤。"
+    "text": "假设有三个类别：猫、狗、鸟。\n\n\n\n类别\n编码向量\n\n\n\n\n猫\n[1, 0, 0]\n\n\n狗\n[0, 1, 0]\n\n\n鸟\n[0, 0, 1]"
   },
   {
-    "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#归一化和预分词",
-    "href": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#归一化和预分词",
-    "title": "Tokenizer：BPE、WordPiece与Unigram分词算法",
-    "section": "归一化和预分词",
-    "text": "归一化和预分词\n\n\n\n\n各个步骤因分词算法各异\n\n\nNormalization：对文本执行的任何清理操作，包括去除重音字符、空格或将文本转化为小写等规则\nPre-tokenization：对文本预分词，包括基于空格或者标点符号等规则\nPostprocessor：添加特殊token字符等"
-  },
-  {
-    "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#bpebyte-pair-encoding",
-    "href": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#bpebyte-pair-encoding",
-    "title": "Tokenizer：BPE、WordPiece与Unigram分词算法",
-    "section": "BPE（Byte-Pair Encoding）",
-    "text": "BPE（Byte-Pair Encoding）\n一句话：反复找最频繁的相邻对，合并它，记下来。\n从字符出发，每一轮找语料中出现最频繁的相邻符号对并合并， 合并规则按顺序记录——推理时，新词也按同样的顺序”回放”这些规则。\n\nByte-level BPE\n普通BPE以字符为最小单元，遇到词表外的字符只能输出[UNK]。 GPT-2改用字节作为最小单元——256个字节覆盖一切Unicode，任何文本都能无损编码，彻底消灭了[UNK]。\n\n\n普通 BPE： “é” 不在词表 → [UNK]\n\n\nByte-level： “é” → 字节 0xC3 0xA9 → 合并为 token Ġé ✅"
-  },
-  {
-    "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#wordpiece",
-    "href": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#wordpiece",
-    "title": "Tokenizer：BPE、WordPiece与Unigram分词算法",
-    "section": "WordPiece",
-    "text": "WordPiece\n一句话：合并”在一起比分开更意外”的符号对。\n与 BPE 的区别在于合并标准——不选最高频的对， 而是选互信息最高的对：两个符号单独出现很少， 但总是结伴出现，才值得合并。\n\\[\\text{score}(A, B) = \\frac{\\text{freq}(AB)}{\\text{freq}(A) \\times \\text{freq}(B)}\\]\n\n\n同样的语料，两种候选合并对：\n\n\n&lt;code&gt;(e, d)&lt;/code&gt; → freq=100，但 e 和 d 各自也很常见\n→ score &lt;b style=\"color:#e05252\"&gt;低&lt;/b&gt;\n\n\n&lt;code&gt;(##ing, ly)&lt;/code&gt; → freq=40，但各自单独几乎不出现\n→ score &lt;b style=\"color:#2a9d5c\"&gt;高&lt;/b&gt; ✅\n\n\n推理时不用合并规则，只用词表：从词头找最长匹配子词， 切不开的整词直接标为 [UNK]。"
-  },
-  {
-    "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#unigram",
-    "href": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#unigram",
-    "title": "Tokenizer：BPE、WordPiece与Unigram分词算法",
-    "section": "Unigram",
-    "text": "Unigram\n一句话：从大词表开始，删去”删了也没太大损失”的 token。\n每个 token 被赋予一个概率（由频率估计）， 一种分词方案的”好坏”用概率之积衡量：\n\\[P(\\text{方案}) = \\prod_{i} P(t_i)\\]\n每轮评估：如果删掉某个 token，语料的总 loss 增加多少？ 增加越少，说明它越可有可无，优先删除。\n\n\n\n\n\ngraph LR\n  A[\"大词表\\n(~1000 tokens)\"] --&gt;|\"删除贡献最小的 20%\"| B[\"缩小词表\"]\n  B --&gt;|\"再删 20%\"| C[\"...\"]\n  C --&gt;|\"达到目标大小\"| D[\"最终词表\\n(保留基础字符)\"]\n\n\n\n\n\n\n推理时用 Viterbi 算法在所有可能分词路径中找概率最大的一条。"
-  },
-  {
-    "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#结束语",
-    "href": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#结束语",
-    "title": "Tokenizer：BPE、WordPiece与Unigram分词算法",
-    "section": "结束语",
-    "text": "结束语\nBERT 上线时上下文窗口只有 512 token，如今 LLM 动辄支持 200K+，vocab_size 也从 3 万膨胀至 10 万+。\n词表越大，同样的文本切出的 token 越少，模型能”看”得越远——分词器的设计，从一开始就在影响模型的上限。\n从 BPE 的贪心合并，到 WordPiece 的互信息驱动，再到 Unigram 的概率裁剪，三种算法殊途同归：用最少的 token，表达最完整的语义。"
-  },
-  {
-    "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#references",
-    "href": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html#references",
-    "title": "Tokenizer：BPE、WordPiece与Unigram分词算法",
-    "section": "References",
-    "text": "References\n\nHugging Face NLP Course - Chapter 6"
-  },
-  {
-    "objectID": "posts/Quarto个人博客搭建/index.html",
-    "href": "posts/Quarto个人博客搭建/index.html",
-    "title": "基于Quarto和GitHub Pages的个人博客网站搭建流程",
+    "objectID": "ai-glossary/index.html",
+    "href": "ai-glossary/index.html",
+    "title": "AI 术语表",
     "section": "",
-    "text": "基于Github Actions自动渲染Quarto博客\n本篇博客旨在提供完整的基于Quarto和GitHub Pages的个人博客网站搭建流程，帮助读者快速搭建个人博客系统。"
-  },
-  {
-    "objectID": "posts/Quarto个人博客搭建/index.html#创建quarto-blog项目",
-    "href": "posts/Quarto个人博客搭建/index.html#创建quarto-blog项目",
-    "title": "基于Quarto和GitHub Pages的个人博客网站搭建流程",
-    "section": "创建Quarto Blog项目",
-    "text": "创建Quarto Blog项目\n\n打开cursor命令面板，输入Quarto:Create Project创建项目\n\n选择Blog Project\n\n选择一个文件夹作为博客项目的根目录\n\n为博客项目起名\n\nquarto将会创建默认配置以支持博客网站功能\n\n点击右上角“预览”按钮，quarto将为你渲染博客网站\n\n\n这是在入门博客项目中创建的关键文件摘要：\n\n\n\n文件\n描述\n\n\n\n\n_quarto.yml\nQuarto 项目文件\n\n\nindex.qmd\n博客主页\n\n\nabout.qmd\n关于页面\n\n\nposts/\n包含文章的目录\n\n\nposts/_metadata.yml\nposts 的共享选项\n\n\nstyles.css\n网站的定制 CSS\n\n\n\n主页预览界面"
-  },
-  {
-    "objectID": "posts/Quarto个人博客搭建/index.html#项目文件介绍",
-    "href": "posts/Quarto个人博客搭建/index.html#项目文件介绍",
-    "title": "基于Quarto和GitHub Pages的个人博客网站搭建流程",
-    "section": "项目文件介绍",
-    "text": "项目文件介绍\n\n主页\n主页是关于posts目录下所有博客的文章列表，如主页预览界面所示。\n源代码：\n---\ntitle: \"blog_tutorial\"\nlisting:\n  contents: posts\n  feed: true\n  sort: \"date desc\"\n  type: default\n  categories: true\n  sort-ui: false\n  filter-ui: false\npage-layout: full\ntitle-block-banner: true\n---\n\n\n\n字段\n描述\n\n\n\n\ntitle\n标题\n\n\ncategories\n开启博客分类\n\n\n\n\nCategories（分类）\ncategories: true表示配置为启用分类，这些分类显示在主页的右侧边缘。\n分类从包含在列表中的文档的前置内容中读取。例如，这里是一个包含分类的样本帖子元数据：\n---\ntitle: \"Post With Code\"\ndescription: \"Post description\"\nauthor: \"Fizz McPhee\"\ndate: \"5/22/2021\"\ncategories:\n  - news\n  - code\n  - analysis\n---\n\n\n关于页面\nabout.qmd包含有关博客及其作者的更多信息。\nabout.qmd源代码可能的样子：\n---\ntitle: \"About\"\nimage: profile.jpg\nabout:\n  template: jolla\n  links:\n    - icon: twitter\n      text: Twitter\n      href: https://twitter.com\n    - icon: linkedin\n      text: LinkedIn\n      href: https://linkedin.com\n    - icon: github\n      text: Github\n      href: https://github.com\n---\n\nAbout this blog\n\n\nposts文件夹\n构成博客内容的帖子位于posts目录中。\n通过在posts内创建一个子目录，并向该目录添加一个index.ipynb（或是 index.qmd）文件来为你的博客添加一篇新帖子。这个文件就是新的博客帖子，当你渲染(quarto render)它时，博客主页将自动更新，在列表顶部包含最新的帖子。"
-  },
-  {
-    "objectID": "posts/Quarto个人博客搭建/index.html#发布publishing",
-    "href": "posts/Quarto个人博客搭建/index.html#发布publishing",
-    "title": "基于Quarto和GitHub Pages的个人博客网站搭建流程",
-    "section": "发布（Publishing）",
-    "text": "发布（Publishing）\n有多种方式发布Quarto博客。本文仅介绍基于GitHub Action的GitHub Pages发布方式。\n\n在github创建新仓库\n\n\n\n本地项目初始化并关联github仓库\n\n创建README.md文件，内容为# 你的仓库名\n创建.gitignore文件\n\n/.quarto/\n/_site/\n\n修改_quarto.yml中site-url为你的仓库地址\n提交修改并关联远端仓库\n\ngit init\ngit add .\ngit commit -m \"first commit\"\ngit branch -M main\ngit remote add origin git@github.com:TheSecondStep/quarto-blog-tutorial.git\ngit push -u origin main\n本地执行一次命令行quarto publish gh-pages quarto将为你创建gh-pages分支，用于GitHub Pages部署网站使用。\n部署GitHub Action GitHub Action可以支持在main分支修改上传代码到github仓库后，自动触发工作流，渲染博客网站并更新。\n创建.github/workflows/publish.yml，内容如下\non:\n  workflow_dispatch:\n  push:\n    branches: main\n\nname: Quarto Publish\n\njobs:\n  build-deploy:\n    runs-on: ubuntu-latest\n    permissions:\n      contents: write\n    steps:\n      - name: Check out repository\n        uses: actions/checkout@v4\n\n      - name: Set up Quarto\n        uses: quarto-dev/quarto-actions/setup@v2\n\n      - name: Render and Publish\n        uses: quarto-dev/quarto-actions/publish@v2\n        with:\n          target: gh-pages\n        env:\n          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}\n在github仓库设置的Actions部分的Workflow permissions勾选Read and write permissions。\n推送上述修改到github，后续只要手动修改博客并推送到main分支，将自动触发GitHub Action渲染网站。\n\n\n\n执行代码\nGitHub Action也支持配置自动执行代码，来作为作为网站渲染的一部分。\n\n💡 确保你的代码能够在GitHub Action中执行成功的最佳实践是通过虚拟环境管理，如venv\n本文以uv管理venv虚拟环境为例，确保你的本地环境已经通过虚拟环境管理python代码且同步到GitHub\n\n修改publish.yml，然后推送到远端分支\non:\n  workflow_dispatch:\n  push:\n    branches: main\n\nname: Quarto Publish\n\njobs:\n  build-deploy:\n    runs-on: ubuntu-latest\n    permissions:\n      contents: write\n    steps:\n      - name: Check out repository\n        uses: actions/checkout@v4\n\n      - name: Set up Quarto\n        uses: quarto-dev/quarto-actions/setup@v2\n\n      - name: Install uv\n        uses: astral-sh/setup-uv@v5\n        with:\n          enable-cache: true\n          python-version: '3.13' #你的虚拟环境的python版本\n\n      - name: Install Dependencies\n        run: |\n          uv sync\n\n      - name: Render and Publish\n        uses: quarto-dev/quarto-actions/publish@v2\n        with:\n          target: gh-pages\n        env:\n          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}\n          QUARTO_PYTHON: .venv/bin/python"
-  },
-  {
-    "objectID": "posts/Quarto个人博客搭建/index.html#添加评论区",
-    "href": "posts/Quarto个人博客搭建/index.html#添加评论区",
-    "title": "基于Quarto和GitHub Pages的个人博客网站搭建流程",
-    "section": "添加评论区",
-    "text": "添加评论区\n\n若思想没有回响，文字便只是一场永无止境的独白；评论区并非点缀，而是博客得以呼吸的肺叶。\n\n\n登录https://giscus.app/zh-CN 并根据指引操作， giscus是利用GitHub Discussions实现的评论系统，天然与我们这套基于Github的博客系统适配。\n然后我们会看到类似这么一段配置\n\n修改_quarto.yml，加上对应配置\n\n上传所有修改，我们的网站就支持评论功能了"
-  },
-  {
-    "objectID": "posts/Quarto个人博客搭建/index.html#结语",
-    "href": "posts/Quarto个人博客搭建/index.html#结语",
-    "title": "基于Quarto和GitHub Pages的个人博客网站搭建流程",
-    "section": "结语",
-    "text": "结语\n至此，基于Quarto的个人网站已经部署上线，支持通过GitHub Pages访问，通过GitHub Action自动化渲染。\n如果你在实际操作中遇到任何问题，欢迎在评论区留言。"
-  },
-  {
-    "objectID": "posts/UserDict vs dict/index.html",
-    "href": "posts/UserDict vs dict/index.html",
-    "title": "dict 子类的隐藏陷阱",
-    "section": "",
-    "text": "dict 是高度优化的 C 语言实现，其内部包含一些”捷径”，使得子类化体验充满挫折且容易出 bug ———— 《Fluent Python》\n\n如果你只是想扩展标准字典而不影响其核心结构，直接继承 dict 完全没问题。但如果你想通过重写特殊方法来改变字典的核心行为，UserDict 才是你最好的选择。\n\n\n\nclass MyDict(dict):\n    def __setitem__(self, key, value):\n        print(f\"Setting {key} = {value}\")  # 这个不会被调用\n        super().__setitem__(key, value)\n\n\nd = MyDict(a=1)\n\n\nfrom collections import UserDict\n\nclass LoggingDict(UserDict):\n    def __setitem__(self, key, value):\n        print(f\"Setting {key} = {value}\")\n        super().__setitem__(key, value)\n\n\nd = LoggingDict(a=1)\n\nSetting a = 1\n\n\n\n\n\n因为 dict 是用 C 语言实现的，它的 __init__、update 等方法在 C 层直接操作底层哈希表内存，不经过 Python 的方法查找机制MRO，所以你重写的 __setitem__ 会被绕过。\n而 UserDict 是纯 Python 实现，数据存储在 self.data（一个普通 dict）里，所有读写操作都通过 Python 方法调用，因此重写的方法一定会被执行。\n\n\n\n同理，collections 模块中还有以下三个 Userxxx 类，它们都避免了直接继承内置类型时的陷阱：\n\n\n\n类\n替代继承\n数据存储\n\n\n\n\nUserDict\ndict\nself.data\n\n\nUserList\nlist\nself.data\n\n\nUserString\nstr\nself.data（字符串）\n\n\n\n三者设计哲学一致：用 self.data 包装底层数据，所有操作都走 Python 方法，子类可以安全重写任意方法。"
-  },
-  {
-    "objectID": "posts/UserDict vs dict/index.html#一个简单示例",
-    "href": "posts/UserDict vs dict/index.html#一个简单示例",
-    "title": "dict 子类的隐藏陷阱",
-    "section": "",
-    "text": "class MyDict(dict):\n    def __setitem__(self, key, value):\n        print(f\"Setting {key} = {value}\")  # 这个不会被调用\n        super().__setitem__(key, value)\n\n\nd = MyDict(a=1)\n\n\nfrom collections import UserDict\n\nclass LoggingDict(UserDict):\n    def __setitem__(self, key, value):\n        print(f\"Setting {key} = {value}\")\n        super().__setitem__(key, value)\n\n\nd = LoggingDict(a=1)\n\nSetting a = 1"
-  },
-  {
-    "objectID": "posts/UserDict vs dict/index.html#为什么",
-    "href": "posts/UserDict vs dict/index.html#为什么",
-    "title": "dict 子类的隐藏陷阱",
-    "section": "",
-    "text": "因为 dict 是用 C 语言实现的，它的 __init__、update 等方法在 C 层直接操作底层哈希表内存，不经过 Python 的方法查找机制MRO，所以你重写的 __setitem__ 会被绕过。\n而 UserDict 是纯 Python 实现，数据存储在 self.data（一个普通 dict）里，所有读写操作都通过 Python 方法调用，因此重写的方法一定会被执行。"
-  },
-  {
-    "objectID": "posts/UserDict vs dict/index.html#userxxx",
-    "href": "posts/UserDict vs dict/index.html#userxxx",
-    "title": "dict 子类的隐藏陷阱",
-    "section": "",
-    "text": "同理，collections 模块中还有以下三个 Userxxx 类，它们都避免了直接继承内置类型时的陷阱：\n\n\n\n类\n替代继承\n数据存储\n\n\n\n\nUserDict\ndict\nself.data\n\n\nUserList\nlist\nself.data\n\n\nUserString\nstr\nself.data（字符串）\n\n\n\n三者设计哲学一致：用 self.data 包装底层数据，所有操作都走 Python 方法，子类可以安全重写任意方法。"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "About this blog"
+    "text": "交叉熵损失函数\n\n\n衡量模型预测和真实标签差距的一种度量\n\n\n\n\n\n\n\n\n\n\n独热编码 (One-Hot Encoding)\n\n\n一种应用于分类的只有一个位置为1、其余为0的向量编码方式\n\n\n\n\n\n\n\n\nNo matching items"
   }
 ]
