@@ -1,0 +1,7 @@
+format:
+  html:
+    page-layout: full
+
+title-block-banner: true
+
+include-after-body: ../posts/subscribe.html
