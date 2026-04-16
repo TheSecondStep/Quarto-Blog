@@ -9,6 +9,10 @@
     ]
   },
   {
+    "listing": "/dl-from-scratch/index.html",
+    "items": []
+  },
+  {
     "listing": "/ai-glossary/index.html",
     "items": [
       "/ai-glossary/terms/cross-entropy-loss.html",

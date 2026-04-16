@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>AI 术语表 – 逃之夭夭 Blog</title>
+<title>深度学习 – 逃之夭夭 Blog</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -75,20 +75,20 @@ ul.task-list li input[type="checkbox"] {
 <script>
 
   window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-terms .list');
+    const listingTargetEl = window.document.querySelector('#listing-lessons .list');
     if (!listingTargetEl) {
       // No listing discovered, do not attach.
       return; 
     }
 
     const options = {
-      valueNames: ['listing-title','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      valueNames: ['listing-title','listing-description','listing-date','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       
-      searchColumns: ["listing-title"],
+      searchColumns: ["listing-title","listing-categories"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-terms'] = new List('listing-terms', options);
+    window['quarto-listings']['listing-lessons'] = new List('listing-lessons', options);
 
     if (window['quarto-listing-loaded']) {
       window['quarto-listing-loaded']();
@@ -153,12 +153,12 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="../ai-glossary/index.html" aria-current="page"> <i class="bi bi-book" role="img">
+    <a class="nav-link" href="../ai-glossary/index.html"> <i class="bi bi-book" role="img">
 </i> 
 <span class="menu-text">AI术语表</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../dl-from-scratch/index.html"> <i class="bi bi-mortarboard" role="img">
+    <a class="nav-link active" href="../dl-from-scratch/index.html" aria-current="page"> <i class="bi bi-mortarboard" role="img">
 </i> 
 <span class="menu-text">深度学习</span></a>
   </li>  
@@ -188,14 +188,14 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
-      <h1 class="title">AI 术语表</h1>
-            <p class="subtitle lead">清晰易懂的术语介绍</p>
+    <div class="quarto-title column-page-left">
+      <h1 class="title">深度学习</h1>
+            <p class="subtitle lead">从零开始Deep Learning</p>
                       </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta column-page-left">
 
       
     
@@ -206,9 +206,11 @@ window.Quarto = {
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(0)</span></div></div></div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
 
 
 
@@ -218,7 +220,7 @@ window.Quarto = {
 
 
 
-<div class="quarto-listing quarto-listing-container-default" id="listing-terms">
+<div class="quarto-listing quarto-listing-container-default" id="listing-lessons">
 <div class="listing-actions-group">
     <div class="input-group input-group-sm quarto-listing-filter">
       <span class="input-group-text"><i class="bi bi-search"></i></span>
@@ -226,34 +228,7 @@ window.Quarto = {
     </div>
 </div>
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-listing-file-modified-sort="1776322781891" data-listing-reading-time-sort="1" data-listing-word-count-sort="37">
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../ai-glossary/terms/cross-entropy-loss.html" class="no-external">交叉熵损失函数</a>
-</h3>
-<div class="delink listing-description"><a href="../ai-glossary/terms/cross-entropy-loss.html" class="no-external">
-<p>衡量模型预测和真实标签差距的一种度量</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../ai-glossary/terms/cross-entropy-loss.html" class="no-external">
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-listing-file-modified-sort="1776322781892" data-listing-reading-time-sort="1" data-listing-word-count-sort="29">
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../ai-glossary/terms/one-hot-encoding.html" class="no-external">独热编码 (One-Hot Encoding)</a>
-</h3>
-<div class="delink listing-description"><a href="../ai-glossary/terms/one-hot-encoding.html" class="no-external">
-<p>一种应用于分类的只有一个位置为1、其余为0的向量编码方式</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../ai-glossary/terms/one-hot-encoding.html" class="no-external">
-</a>
-</div>
-</div>
+
 </div>
 <div class="listing-no-matching d-none">No matching items</div>
 </div></main> <!-- /main -->

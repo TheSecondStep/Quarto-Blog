@@ -98,6 +98,13 @@
     "text": "结语\n至此，基于Quarto的个人网站已经部署上线，支持通过GitHub Pages访问，通过GitHub Action自动化渲染。\n如果你在实际操作中遇到任何问题，欢迎在评论区留言。"
   },
   {
+    "objectID": "dl-from-scratch/index.html",
+    "href": "dl-from-scratch/index.html",
+    "title": "深度学习",
+    "section": "",
+    "text": "No matching items"
+  },
+  {
     "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html",
     "href": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html",
     "title": "Tokenizer：BPE、WordPiece与Unigram分词算法",
