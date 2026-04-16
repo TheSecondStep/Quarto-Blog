@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="逃之夭夭">
+<meta name="dcterms.date" content="2026-04-16">
 
-<title>Attention is all you need – 逃之夭夭 Blog</title>
+<title>人工智能介绍 – 逃之夭夭 Blog</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -26,25 +28,23 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-529d1a61654bdf761d2a5521fb1e6582.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-529d1a61654bdf761d2a5521fb1e6582.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -72,68 +72,13 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
 
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="styles.css">
-<link rel="alternate" type="application/rss+xml" title="逃之夭夭 Blog" href="index.xml" data-external="1"></head>
+<link rel="stylesheet" href="../../styles.css">
+</head>
 
 <body class="nav-fixed quarto-light">
 
@@ -142,7 +87,7 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">逃之夭夭 Blog</span>
     </a>
   </div>
@@ -153,14 +98,14 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./ai-glossary/index.html"> <i class="bi bi-book" role="img">
+    <a class="nav-link" href="../../ai-glossary/index.html"> <i class="bi bi-book" role="img">
 </i> 
 <span class="menu-text">AI术语表</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item compact">
@@ -169,7 +114,7 @@ window.Quarto = {
 <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="./index.xml"> <i class="bi bi-rss" role="img">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -183,15 +128,30 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-left">
-      <h1 class="title">Attention is all you need</h1>
-                      </div>
+    <div class="quarto-title column-page">
+      <h1 class="title">人工智能介绍</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">机器学习</div>
+              </div>
+                  </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page-left">
+  <div class="quarto-title-meta column-page">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>逃之夭夭 </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">April 16, 2026</p>
+      </div>
+    </div>
     
       
     </div>
@@ -200,151 +160,60 @@ window.Quarto = {
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(4)</span></div><div class="category" data-category="ZGVlcCUyMGxlYXJuaW5n">deep learning <span class="quarto-category-count">(2)</span></div><div class="category" data-category="ZmFzdGFp">fastai <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bGxt">llm <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cHl0aG9u">python <span class="quarto-category-count">(1)</span></div><div class="category" data-category="dG9rZW5pemVy">tokenizer <span class="quarto-category-count">(1)</span></div><div class="category" data-category="dG9vbHM=">tools <span class="quarto-category-count">(1)</span></div></div></div>
+    
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
 
 
 
 
 
+<blockquote class="blockquote">
+<p>机器学习是这样一个领域：它赋予计算机无需显式编程即可学习的能力。——阿瑟·塞缪尔</p>
+</blockquote>
+<section id="人工智能机器学习和深度学习" class="level1">
+<h1>人工智能、机器学习和深度学习</h1>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">  flowchart TB
+      AI["**人工智能 AI**&lt;br&gt;让机器表现出智能"]
+      ML["**机器学习 ML**&lt;br&gt;从数据中学习规律"]
+      DL["**深度学习 DL**&lt;br&gt;多层神经网络自动提取特征"]
 
+      AI --&gt; ML --&gt; DL
 
+      AI --- A1["符号推理 · 专家系统"]
+      ML --- M1["SVM · 随机森林 · KNN"]
+      DL --- D1["CNN · RNN · Transformer"]
 
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="dG9rZW5pemVyJTJDZGVlcCUyMGxlYXJuaW5nJTJDbGxt" data-listing-date-sort="1776038400000" data-listing-file-modified-sort="1776328191185" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="220">
-<div class="thumbnail"><a href="./posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html" class="no-external">
-
-<img loading="lazy" src="./posts/Tokenizer：BPE、WordPiece与Unigram分词算法/images/index.jpg" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html" class="no-external">Tokenizer：BPE、WordPiece与Unigram分词算法</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('dG9rZW5pemVy'); return false;">tokenizer</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGVlcCUyMGxlYXJuaW5n'); return false;">deep learning</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('bGxt'); return false;">llm</div>
-
+      style AI fill:#d4e6f1,stroke:#2c3e50,stroke-width:2px
+      style ML fill:#a9dfbf,stroke:#27ae60,stroke-width:2px
+      style DL fill:#f9e79f,stroke:#f39c12,stroke-width:2px
+      style A1 fill:#eaf2f8,stroke:none
+      style M1 fill:#eafaf1,stroke:none
+      style D1 fill:#fef9e7,stroke:none
+</pre>
 </div>
-<div class="delink listing-description"><a href="./posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html" class="no-external">
-<em>“我的语言的边界，就是我的世界的边界。”</em> ———— 路德维希·维特根斯坦
-</a></div>
-</div>
-<div class="metadata">
-<a href="./posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html" class="no-external">
-<div class="listing-date">
-Apr 13, 2026
-</div>
-<div class="listing-author">
-逃之夭夭
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="cHl0aG9u" data-listing-date-sort="1775952000000" data-listing-file-modified-sort="1776328191187" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="69">
-<div class="thumbnail"><a href="./posts/UserDict vs dict/index.html" class="no-external">
-
-<img loading="lazy" src="./posts/UserDict vs dict/images/index.jpg" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/UserDict vs dict/index.html" class="no-external">dict 子类的隐藏陷阱</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('cHl0aG9u'); return false;">python</div>
-
-</div>
-<div class="delink listing-description"><a href="./posts/UserDict vs dict/index.html" class="no-external">
-dict 是高度优化的 C 语言实现，其内部包含一些”捷径”，使得子类化体验充满挫折且容易出 bug ———— 《Fluent Python》
-</a></div>
-</div>
-<div class="metadata">
-<a href="./posts/UserDict vs dict/index.html" class="no-external">
-<div class="listing-date">
-Apr 12, 2026
-</div>
-<div class="listing-author">
-逃之夭夭
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="ZGVlcCUyMGxlYXJuaW5nJTJDZmFzdGFp" data-listing-date-sort="1769731200000" data-listing-file-modified-sort="1776328191227" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="83">
-<div class="thumbnail"><a href="./posts/基于MNIST全量数据集的神经网络训练/index.html" class="no-external">
-
-<img loading="lazy" src="./posts/基于MNIST全量数据集的神经网络训练/images/index.jpg" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/基于MNIST全量数据集的神经网络训练/index.html" class="no-external">基于MNIST全量数据集的神经网络训练</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGVlcCUyMGxlYXJuaW5n'); return false;">deep learning</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZmFzdGFp'); return false;">fastai</div>
-
-</div>
-<div class="delink listing-description"><a href="./posts/基于MNIST全量数据集的神经网络训练/index.html" class="no-external">
-训练你的第一个神经网络
-</a></div>
-</div>
-<div class="metadata">
-<a href="./posts/基于MNIST全量数据集的神经网络训练/index.html" class="no-external">
-<div class="listing-date">
-Jan 30, 2026
-</div>
-<div class="listing-author">
-逃之夭夭
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="dG9vbHM=" data-listing-date-sort="1769299200000" data-listing-file-modified-sort="1776328191182" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="813">
-<div class="thumbnail"><a href="./posts/Quarto个人博客搭建/index.html" class="no-external">
-
-<img loading="lazy" src="./posts/Quarto个人博客搭建/image.jpg" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/Quarto个人博客搭建/index.html" class="no-external">基于Quarto和GitHub Pages的个人博客网站搭建流程</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('dG9vbHM='); return false;">tools</div>
-
-</div>
-<div class="delink listing-description"><a href="./posts/Quarto个人博客搭建/index.html" class="no-external">
-基于Github Actions自动渲染Quarto博客
-</a></div>
-</div>
-<div class="metadata">
-<a href="./posts/Quarto个人博客搭建/index.html" class="no-external">
-<div class="listing-date">
-Jan 25, 2026
-</div>
-<div class="listing-author">
-逃之夭夭
-</div>
-</a>
+<p></p></figure><p></p>
 </div>
 </div>
 </div>
-<div class="listing-no-matching d-none">No matching items</div>
-</div></main> <!-- /main -->
+</section>
+<section id="什么是机器学习" class="level1">
+<h1>什么是机器学习</h1>
+
+
+</section>
+
+</main> <!-- /main -->
+<hr>
+<form action="https://buttondown.com/api/emails/embed-subscribe/tzyy" method="post" style="display:flex; gap:8px; align-items:center; margin-top:1em;">
+  <input type="email" name="email" placeholder="输入你的邮箱" style="padding:8px 12px; border-radius:6px; border:2px dashed #ccc; flex:1;">
+  <input type="submit" value="订阅博客" style="padding:8px 16px; border-radius:6px; border:none; background:white; color:#4a90e2; border:2px dashed #4a90e2;">
+</form>
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

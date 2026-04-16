@@ -2,42 +2,46 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/index.html</loc>
-    <lastmod>2026-04-16T06:59:41.892Z</lastmod>
+    <lastmod>2026-04-16T08:29:51.177Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/ai-glossary/terms/cross-entropy-loss.html</loc>
-    <lastmod>2026-04-16T06:59:41.891Z</lastmod>
+    <lastmod>2026-04-16T08:29:51.173Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/about.html</loc>
-    <lastmod>2026-04-16T06:59:41.891Z</lastmod>
+    <lastmod>2026-04-16T08:29:51.172Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/posts/UserDict vs dict/index.html</loc>
-    <lastmod>2026-04-16T06:59:41.900Z</lastmod>
+    <lastmod>2026-04-16T08:29:51.187Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/posts/Quarto个人博客搭建/index.html</loc>
-    <lastmod>2026-04-16T06:59:41.895Z</lastmod>
+    <lastmod>2026-04-16T08:29:51.182Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/dl-from-scratch/index.html</loc>
-    <lastmod>2026-04-16T06:59:41.892Z</lastmod>
+    <lastmod>2026-04-16T08:29:51.173Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/TheSecondStep/Quarto-Blog/dl-from-scratch/lessons/Introduce of machine learning.html</loc>
+    <lastmod>2026-04-16T08:29:51.173Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html</loc>
-    <lastmod>2026-04-16T06:59:41.899Z</lastmod>
+    <lastmod>2026-04-16T08:29:51.185Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/posts/基于MNIST全量数据集的神经网络训练/index.html</loc>
-    <lastmod>2026-04-16T06:59:41.940Z</lastmod>
+    <lastmod>2026-04-16T08:29:51.227Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/ai-glossary/terms/one-hot-encoding.html</loc>
-    <lastmod>2026-04-16T06:59:41.892Z</lastmod>
+    <lastmod>2026-04-16T08:29:51.173Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/ai-glossary/index.html</loc>
-    <lastmod>2026-04-16T06:59:41.891Z</lastmod>
+    <lastmod>2026-04-16T08:29:51.173Z</lastmod>
   </url>
 </urlset>

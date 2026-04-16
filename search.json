@@ -102,7 +102,14 @@
     "href": "dl-from-scratch/index.html",
     "title": "深度学习",
     "section": "",
-    "text": "No matching items"
+    "text": "人工智能介绍\n\n\n\n机器学习\n\n\n\n\n\n\n\n\n\nApr 16, 2026\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "dl-from-scratch/lessons/Introduce of machine learning.html",
+    "href": "dl-from-scratch/lessons/Introduce of machine learning.html",
+    "title": "人工智能介绍",
+    "section": "",
+    "text": "机器学习是这样一个领域：它赋予计算机无需显式编程即可学习的能力。——阿瑟·塞缪尔\n\n\n人工智能、机器学习和深度学习\n\n\n\n\n\n  flowchart TB\n      AI[\"**人工智能 AI**&lt;br&gt;让机器表现出智能\"]\n      ML[\"**机器学习 ML**&lt;br&gt;从数据中学习规律\"]\n      DL[\"**深度学习 DL**&lt;br&gt;多层神经网络自动提取特征\"]\n\n      AI --&gt; ML --&gt; DL\n\n      AI --- A1[\"符号推理 · 专家系统\"]\n      ML --- M1[\"SVM · 随机森林 · KNN\"]\n      DL --- D1[\"CNN · RNN · Transformer\"]\n\n      style AI fill:#d4e6f1,stroke:#2c3e50,stroke-width:2px\n      style ML fill:#a9dfbf,stroke:#27ae60,stroke-width:2px\n      style DL fill:#f9e79f,stroke:#f39c12,stroke-width:2px\n      style A1 fill:#eaf2f8,stroke:none\n      style M1 fill:#eafaf1,stroke:none\n      style D1 fill:#fef9e7,stroke:none\n\n\n\n\n\n\n\n\n什么是机器学习"
   },
   {
     "objectID": "posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html",

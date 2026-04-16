@@ -10,7 +10,9 @@
   },
   {
     "listing": "/dl-from-scratch/index.html",
-    "items": []
+    "items": [
+      "/dl-from-scratch/lessons/Introduce of machine learning.html"
+    ]
   },
   {
     "listing": "/ai-glossary/index.html",
