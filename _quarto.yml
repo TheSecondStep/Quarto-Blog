@@ -10,9 +10,9 @@ website:
       - icon: book
         text: "AI术语表"
         href: ai-glossary/index.qmd
-      - icon: mortarboard
-        text: "深度学习"
-        href: dl-from-scratch/index.qmd
+      # - icon: mortarboard
+      #   text: "深度学习"
+      #   href: dl-from-scratch/index.qmd
     right:
       - about.qmd
       - icon: github
