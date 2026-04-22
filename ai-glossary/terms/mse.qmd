@@ -1,0 +1,8 @@
+---
+title: "MSE(Mean Square Error)"
+description: "一种用于线性回归任务的[损失函数](loss_func.qmd)"
+---
+
+MSE：均方误差。
+
+$$MSE = \frac{1}{n}\sum_{i=1}^n (y_i - \hat{y}_i)^2$$

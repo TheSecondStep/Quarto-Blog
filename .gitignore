@@ -4,3 +4,6 @@
 **/*.quarto_ipynb
 /.claude/
 /.vscode
+
+dl-from-scratch/lessons/灵魂发问.ipynb
+posts/mnist.ipynb

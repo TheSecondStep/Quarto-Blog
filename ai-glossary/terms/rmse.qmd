@@ -1,0 +1,8 @@
+---
+title: "RMSE(Root Mean Squared Error)"
+description: "一种用于线性回归任务的[损失函数](loss_func.qmd)"
+---
+
+RMSE：均方根误差，[MSE](mse.qmd)的平方根。
+
+$$RMSE = \sqrt{\frac{1}{n}\sum_{i=1}^n (y_i - \hat{y}_i)^2}$$
