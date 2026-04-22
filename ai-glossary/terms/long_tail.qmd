@@ -1,0 +1,16 @@
+---
+title: "长尾分布"
+description: "少数头部项出现频繁，大量尾部项各自出现很少的分布形态"
+---
+
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Pareto 分布，alpha 越小尾部越长
+data = (np.random.pareto(a=1.5, size=1000) + 1) * 10
+
+plt.hist(data, bins=50, log=True)
+plt.title("Long-tail distribution (Pareto)")
+plt.show()
+```
