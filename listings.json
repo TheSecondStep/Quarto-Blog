@@ -9,6 +9,12 @@
     ]
   },
   {
+    "listing": "/dl-from-scratch/index.html",
+    "items": [
+      "/dl-from-scratch/lessons/Introduce of machine learning.html"
+    ]
+  },
+  {
     "listing": "/ai-glossary/index.html",
     "items": [
       "/ai-glossary/terms/mae.html",
@@ -18,13 +24,8 @@
       "/ai-glossary/terms/regression.html",
       "/ai-glossary/terms/loss_func.html",
       "/ai-glossary/terms/one-hot-encoding.html",
-      "/ai-glossary/terms/overfitting.html"
-    ]
-  },
-  {
-    "listing": "/dl-from-scratch/index.html",
-    "items": [
-      "/dl-from-scratch/lessons/Introduce of machine learning.html"
+      "/ai-glossary/terms/overfitting.html",
+      "/ai-glossary/terms/long_tail.html"
     ]
   }
 ]
