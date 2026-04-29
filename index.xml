@@ -24,7 +24,7 @@
 <blockquote class="blockquote">
 <p>基于<a href="https://docs.pytorch.org/vision/stable/transforms.html">torchvision.transforms v2</a></p>
 </blockquote>
-<div id="bdaf8d5b" class="cell" data-execution_count="1">
+<div id="bdaf8d5b" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> pathlib <span class="im" style="color: #00769E;
@@ -46,17 +46,20 @@ font-style: inherit;">=</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'tight'</span></span>
 <span id="cb1-5"></span>
-<span id="cb1-6"><span class="im" style="color: #00769E;
+<span id="cb1-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># download helpers from https://github.com/TheSecondStep/Quarto-Blog/tree/main/posts/%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB%E4%BB%BB%E5%8A%A1%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA%E5%8F%AF%E8%A7%86%E5%8C%96</span></span>
+<span id="cb1-7"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> helpers <span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> plot, show_one</span>
-<span id="cb1-7"><span class="im" style="color: #00769E;
+<span id="cb1-8"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> torchvision.transforms <span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> v2</span>
-<span id="cb1-8"><span class="im" style="color: #00769E;
+<span id="cb1-9"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> fastai.vision.<span class="bu" style="color: null;
 background-color: null;
