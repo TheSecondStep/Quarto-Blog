@@ -10,7 +10,609 @@
 <atom:link href="https://github.com/TheSecondStep/Quarto-Blog/index.xml" rel="self" type="application/rss+xml"/>
 <description>逃之夭夭&#39;s Blog</description>
 <generator>quarto-1.9.37</generator>
-<lastBuildDate>Mon, 13 Apr 2026 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Wed, 29 Apr 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>torchvision.transforms v2</title>
+  <dc:creator>逃之夭夭 </dc:creator>
+  <link>https://github.com/TheSecondStep/Quarto-Blog/posts/图像分类任务数据增强可视化/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<blockquote class="blockquote">
+<p>基于<a href="https://docs.pytorch.org/vision/stable/transforms.html">torchvision.transforms v2</a></p>
+</blockquote>
+<div id="bdaf8d5b" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> pathlib <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> Path</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> torch</span>
+<span id="cb1-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> plt</span>
+<span id="cb1-4">plt.rcParams[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"savefig.bbox"</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'tight'</span></span>
+<span id="cb1-5"></span>
+<span id="cb1-6"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> helpers <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> plot, show_one</span>
+<span id="cb1-7"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> torchvision.transforms <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> v2</span>
+<span id="cb1-8"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> fastai.vision.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">all</span> <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> PILImage, ToTensor</span></code></pre></div></div>
+</div>
+<div id="0d4c5896" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">torch.manual_seed(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">42</span>)</span></code></pre></div></div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<pre><code>&lt;torch._C.Generator at 0x27ea4e6af30&gt;</code></pre>
+</div>
+</div>
+<div id="e365b674" class="cell" data-execution_count="108">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">img <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> PILImage.create(Path(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'./images/rabbit.jpg'</span>).resolve())</span>
+<span id="cb4-2">img <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> PILImage.create(img.resize((<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">512</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">512</span>)))</span></code></pre></div></div>
+</div>
+<div id="d57d2970" class="cell" data-execution_count="109">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">tfms <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ToTensor()</span>
+<span id="cb5-2">img_t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tfms(img)</span></code></pre></div></div>
+</div>
+<div id="9b750cfa" class="cell" data-execution_count="110">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">type</span>(img_t) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">, </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>img_t<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>dtype <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">, </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>img_t<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>shape <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>type(img_t) = &lt;class 'fastai.torch_core.TensorImage'&gt;, img_t.dtype = torch.uint8, img_t.shape = torch.Size([3, 512, 512])</code></pre>
+</div>
+</div>
+<section id="v2.resize" class="level2">
+<h2 class="anchored" data-anchor-id="v2.resize">v2.Resize</h2>
+<div id="b5a8adc1" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">tfms <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> v2.Resize(size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">224</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">224</span>))</span>
+<span id="cb8-2">out <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tfms(img)</span></code></pre></div></div>
+</div>
+<div id="0824e7e9" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">show_one(img), show_one(out)</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/图像分类任务数据增强可视化/index_files/figure-html/cell-8-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/图像分类任务数据增强可视化/index_files/figure-html/cell-8-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="v2.randomcrop" class="level2">
+<h2 class="anchored" data-anchor-id="v2.randomcrop">v2.RandomCrop</h2>
+<div id="ec6f334c" class="cell" data-execution_count="86">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">tfms <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> v2.RandomCrop(size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">224</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">224</span>))</span>
+<span id="cb10-2">out <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tfms(img)</span>
+<span id="cb10-3"></span>
+<span id="cb10-4">plot([img, out])</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/图像分类任务数据增强可视化/index_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="v2.centercrop" class="level2">
+<h2 class="anchored" data-anchor-id="v2.centercrop">v2.CenterCrop</h2>
+<div id="be436c91" class="cell" data-execution_count="53">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1">tfms <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> v2.CenterCrop(size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">224</span>)</span>
+<span id="cb11-2">out <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tfms(img)</span>
+<span id="cb11-3"></span>
+<span id="cb11-4">plot([img, out])</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/图像分类任务数据增强可视化/index_files/figure-html/cell-10-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="v2.randomresizedcrop" class="level2">
+<h2 class="anchored" data-anchor-id="v2.randomresizedcrop">v2.RandomResizedCrop</h2>
+<div id="d8ae41d6" class="cell" data-execution_count="48">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1">tfms <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> v2.RandomResizedCrop(size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">224</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">224</span>), scale<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.08</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>), ratio<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>))</span>
+<span id="cb12-2">out <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tfms(img)</span>
+<span id="cb12-3"></span>
+<span id="cb12-4">plot([img, out])</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/图像分类任务数据增强可视化/index_files/figure-html/cell-11-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="v2.randomhorizontalflip" class="level2">
+<h2 class="anchored" data-anchor-id="v2.randomhorizontalflip">v2.RandomHorizontalFlip</h2>
+<div id="18c0d9d8" class="cell" data-execution_count="58">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">tfms <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> v2.RandomHorizontalFlip(p<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb13-2">out <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tfms(img)</span>
+<span id="cb13-3"></span>
+<span id="cb13-4">plot([img, out])</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/图像分类任务数据增强可视化/index_files/figure-html/cell-12-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="v2.randomverticalflip" class="level2">
+<h2 class="anchored" data-anchor-id="v2.randomverticalflip">v2.RandomVerticalFlip</h2>
+<div id="c819cdf2" class="cell" data-execution_count="60">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">tfms <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> v2.RandomVerticalFlip(p<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb14-2">out <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tfms(img)</span>
+<span id="cb14-3"></span>
+<span id="cb14-4">plot([img, out])</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/图像分类任务数据增强可视化/index_files/figure-html/cell-13-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="v2.pad" class="level2">
+<h2 class="anchored" data-anchor-id="v2.pad">v2.Pad</h2>
+<div id="c384e873" class="cell" data-execution_count="65">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1">tfms <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> v2.Pad(padding<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">20</span>, padding_mode<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'constant'</span>)</span>
+<span id="cb15-2">out <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tfms(img)</span>
+<span id="cb15-3"></span>
+<span id="cb15-4">plot([img, out])</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/图像分类任务数据增强可视化/index_files/figure-html/cell-14-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="v2.randomrotation" class="level2">
+<h2 class="anchored" data-anchor-id="v2.randomrotation">v2.RandomRotation</h2>
+<div id="01858a6f" class="cell" data-execution_count="72">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1">tfms <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> v2.RandomRotation(degrees<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>)</span>
+<span id="cb16-2">out <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tfms(img)</span>
+<span id="cb16-3"></span>
+<span id="cb16-4">plot([img, out])</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/图像分类任务数据增强可视化/index_files/figure-html/cell-15-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="v2.colorjitter" class="level2">
+<h2 class="anchored" data-anchor-id="v2.colorjitter">v2.ColorJitter</h2>
+<ul>
+<li>brightness：亮度</li>
+<li>contrast：对比度</li>
+<li>saturation：饱和度</li>
+<li>hue：色相</li>
+</ul>
+<div id="df0a3275" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 亮度</span></span>
+<span id="cb17-2">tfms <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> v2.ColorJitter(brightness<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>)</span>
+<span id="cb17-3">out <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tfms(img)</span>
+<span id="cb17-4"></span>
+<span id="cb17-5">plot([img, out])</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/图像分类任务数据增强可视化/index_files/figure-html/cell-16-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="649cfb42" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 对比度</span></span>
+<span id="cb18-2">tfms <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> v2.ColorJitter(brightness<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, contrast<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>)</span>
+<span id="cb18-3">out <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tfms(img)</span>
+<span id="cb18-4"></span>
+<span id="cb18-5">plot([img, out])</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/图像分类任务数据增强可视化/index_files/figure-html/cell-17-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="761900ee" class="cell" data-execution_count="89">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1">tfms <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> v2.ColorJitter(brightness<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, contrast<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, saturation<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>)</span>
+<span id="cb19-2">out <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tfms(img)</span>
+<span id="cb19-3"></span>
+<span id="cb19-4">plot([img, out])</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/图像分类任务数据增强可视化/index_files/figure-html/cell-18-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="9431435f" class="cell" data-execution_count="90">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1">tfms <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> v2.ColorJitter(brightness<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, contrast<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, saturation<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, hue<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>)</span>
+<span id="cb20-2">out <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tfms(img)</span>
+<span id="cb20-3"></span>
+<span id="cb20-4">plot([img, out])</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/图像分类任务数据增强可视化/index_files/figure-html/cell-19-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="v2.randaugment" class="level2">
+<h2 class="anchored" data-anchor-id="v2.randaugment">v2.RandAugment</h2>
+<div id="c93badc5" class="cell" data-execution_count="115">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1">tfms <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> v2.RandAugment()</span>
+<span id="cb21-2">out <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tfms(img)</span>
+<span id="cb21-3"></span>
+<span id="cb21-4">plot([img, out])</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/图像分类任务数据增强可视化/index_files/figure-html/cell-20-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="40062011" class="cell" data-execution_count="118">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1">tfms <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> v2.RandAugment()</span>
+<span id="cb22-2">out <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tfms(img)</span>
+<span id="cb22-3"></span>
+<span id="cb22-4">plot([img, out])</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://github.com/TheSecondStep/Quarto-Blog/posts/图像分类任务数据增强可视化/index_files/figure-html/cell-21-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="v2.compose" class="level2">
+<h2 class="anchored" data-anchor-id="v2.compose">v2.Compose</h2>
+<div id="477c5b79" class="cell" data-execution_count="112">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1">transforms <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> v2.Compose([</span>
+<span id="cb23-2">    v2.RandomResizedCrop(size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">224</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">224</span>), antialias<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>),</span>
+<span id="cb23-3">    v2.RandomHorizontalFlip(p<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>),</span>
+<span id="cb23-4">    v2.PILToTensor(),</span>
+<span id="cb23-5">    v2.ToDtype(torch.float32, scale<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>),</span>
+<span id="cb23-6">    v2.Normalize(mean<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.485</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.456</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.406</span>], std<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.229</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.224</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.225</span>]),</span>
+<span id="cb23-7">])</span>
+<span id="cb23-8">out <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> transforms(img)</span></code></pre></div></div>
+</div>
+<div id="edc2653b" class="cell" data-execution_count="114">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1">out</span></code></pre></div></div>
+<div class="cell-output cell-output-display" data-execution_count="114">
+<pre><code>tensor([[[-0.2684, -0.3027, -0.2856,  ..., -0.3198, -0.3883, -0.4397],
+         [-0.2513, -0.2513, -0.2513,  ..., -0.3369, -0.3883, -0.4054],
+         [-0.2342, -0.2342, -0.2513,  ..., -0.3369, -0.3712, -0.3883],
+         ...,
+         [ 0.8447,  1.3584,  1.7009,  ...,  0.6049,  0.5878,  0.5536],
+         [-0.2684, -0.0801,  0.1597,  ...,  0.5364,  0.5193,  0.5364],
+         [-0.3712, -0.2684, -0.1486,  ...,  0.5022,  0.5193,  0.5364]],
+
+        [[ 0.4153,  0.3803,  0.3803,  ...,  0.1877,  0.1702,  0.1352],
+         [ 0.4328,  0.4153,  0.3978,  ...,  0.1877,  0.1702,  0.1702],
+         [ 0.4678,  0.4503,  0.4503,  ...,  0.2052,  0.2052,  0.1877],
+         ...,
+         [ 1.9909,  2.2185,  2.3060,  ...,  1.8158,  1.7983,  1.7808],
+         [ 1.3957,  1.6408,  1.8158,  ...,  1.6933,  1.7108,  1.6933],
+         [ 1.2031,  1.4482,  1.6583,  ...,  1.6408,  1.6583,  1.6232]],
+
+        [[ 1.4200,  1.4025,  1.4200,  ...,  1.3677,  1.3502,  1.3502],
+         [ 1.4374,  1.4374,  1.4374,  ...,  1.3851,  1.3502,  1.3502],
+         [ 1.4548,  1.4722,  1.4548,  ...,  1.3502,  1.3328,  1.3502],
+         ...,
+         [ 2.3960,  2.4831,  2.5354,  ...,  2.4483,  2.4483,  2.4483],
+         [ 2.1520,  2.2566,  2.3611,  ...,  2.3437,  2.3611,  2.3786],
+         [ 2.1346,  2.2566,  2.3611,  ...,  2.2914,  2.2914,  2.3088]]])</code></pre>
+</div>
+</div>
+
+
+</section>
+
+ ]]></description>
+  <category>deep learning</category>
+  <category>vision</category>
+  <guid>https://github.com/TheSecondStep/Quarto-Blog/posts/图像分类任务数据增强可视化/</guid>
+  <pubDate>Wed, 29 Apr 2026 00:00:00 GMT</pubDate>
+  <media:content url="https://github.com/TheSecondStep/Quarto-Blog/posts/图像分类任务数据增强可视化/images/index.jpg" medium="image" type="image/jpeg"/>
+</item>
 <item>
   <title>Tokenizer：BPE、WordPiece与Unigram分词算法</title>
   <dc:creator>逃之夭夭 </dc:creator>

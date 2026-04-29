@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/图像分类任务数据增强可视化/index.html",
       "/posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html",
       "/posts/UserDict vs dict/index.html",
       "/posts/基于MNIST全量数据集的神经网络训练/index.html",

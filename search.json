@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Attention is all you need",
     "section": "",
-    "text": "Tokenizer：BPE、WordPiece与Unigram分词算法\n\n\n\ntokenizer\n\ndeep learning\n\nllm\n\n\n\n\n\n\n\n\n\nApr 13, 2026\n\n\n逃之夭夭\n\n\n\n\n\n\n\n\n\n\n\n\ndict 子类的隐藏陷阱\n\n\n\npython\n\n\n\n\n\n\n\n\n\nApr 12, 2026\n\n\n逃之夭夭\n\n\n\n\n\n\n\n\n\n\n\n\n基于MNIST全量数据集的神经网络训练\n\n\n\ndeep learning\n\nfastai\n\n\n\n\n\n\n\n\n\nJan 30, 2026\n\n\n逃之夭夭\n\n\n\n\n\n\n\n\n\n\n\n\n基于Quarto和GitHub Pages的个人博客网站搭建流程\n\n\n\ntools\n\n\n\n\n\n\n\n\n\nJan 25, 2026\n\n\n逃之夭夭\n\n\n\n\n\nNo matching items"
+    "text": "torchvision.transforms v2\n\n\n\ndeep learning\n\nvision\n\n\n\n\n\n\n\n\n\nApr 29, 2026\n\n\n逃之夭夭\n\n\n\n\n\n\n\n\n\n\n\n\nTokenizer：BPE、WordPiece与Unigram分词算法\n\n\n\ntokenizer\n\ndeep learning\n\nllm\n\n\n\n\n\n\n\n\n\nApr 13, 2026\n\n\n逃之夭夭\n\n\n\n\n\n\n\n\n\n\n\n\ndict 子类的隐藏陷阱\n\n\n\npython\n\n\n\n\n\n\n\n\n\nApr 12, 2026\n\n\n逃之夭夭\n\n\n\n\n\n\n\n\n\n\n\n\n基于MNIST全量数据集的神经网络训练\n\n\n\ndeep learning\n\nfastai\n\n\n\n\n\n\n\n\n\nJan 30, 2026\n\n\n逃之夭夭\n\n\n\n\n\n\n\n\n\n\n\n\n基于Quarto和GitHub Pages的个人博客网站搭建流程\n\n\n\ntools\n\n\n\n\n\n\n\n\n\nJan 25, 2026\n\n\n逃之夭夭\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "ai-glossary/terms/mae.html",
@@ -140,20 +140,6 @@
     "text": "References\n\nHugging Face NLP Course - Chapter 6"
   },
   {
-    "objectID": "dl-from-scratch/lessons/Introduce of machine learning.html",
-    "href": "dl-from-scratch/lessons/Introduce of machine learning.html",
-    "title": "机器学习介绍",
-    "section": "",
-    "text": "机器学习是这样一个领域：它赋予计算机无需显式编程即可学习的能力。——阿瑟·塞缪尔\n\n\n人工智能、机器学习和深度学习\n\n\n\nwhat_is_ml\n\n\n\n\n什么是机器学习\n\n\n\n02\n\n\n\n\nLearning Map\n\n\n\nlm\n\n\n\n\n\n01_regression"
-  },
-  {
-    "objectID": "dl-from-scratch/index.html",
-    "href": "dl-from-scratch/index.html",
-    "title": "深度学习",
-    "section": "",
-    "text": "机器学习介绍\n\n\n\n机器学习\n\n\n\n\n\n\n\n\n\nApr 16, 2026\n\n\n\n\n\nNo matching items"
-  },
-  {
     "objectID": "posts/Quarto个人博客搭建/index.html",
     "href": "posts/Quarto个人博客搭建/index.html",
     "title": "基于Quarto和GitHub Pages的个人博客网站搭建流程",
@@ -194,6 +180,104 @@
     "title": "基于Quarto和GitHub Pages的个人博客网站搭建流程",
     "section": "结语",
     "text": "结语\n至此，基于Quarto的个人网站已经部署上线，支持通过GitHub Pages访问，通过GitHub Action自动化渲染。\n如果你在实际操作中遇到任何问题，欢迎在评论区留言。"
+  },
+  {
+    "objectID": "dl-from-scratch/index.html",
+    "href": "dl-from-scratch/index.html",
+    "title": "深度学习",
+    "section": "",
+    "text": "机器学习介绍\n\n\n\n机器学习\n\n\n\n\n\n\n\n\n\nApr 16, 2026\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "dl-from-scratch/lessons/Introduce of machine learning.html",
+    "href": "dl-from-scratch/lessons/Introduce of machine learning.html",
+    "title": "机器学习介绍",
+    "section": "",
+    "text": "机器学习是这样一个领域：它赋予计算机无需显式编程即可学习的能力。——阿瑟·塞缪尔\n\n\n人工智能、机器学习和深度学习\n\n\n\nwhat_is_ml\n\n\n\n\n什么是机器学习\n\n\n\n02\n\n\n\n\nLearning Map\n\n\n\nlm\n\n\n\n\n\n01_regression"
+  },
+  {
+    "objectID": "posts/图像分类任务数据增强可视化/index.html",
+    "href": "posts/图像分类任务数据增强可视化/index.html",
+    "title": "torchvision.transforms v2",
+    "section": "",
+    "text": "基于torchvision.transforms v2\nfrom pathlib import Path\nimport torch\nimport matplotlib.pyplot as plt\nplt.rcParams[\"savefig.bbox\"] = 'tight'\n\nfrom helpers import plot, show_one\nfrom torchvision.transforms import v2\nfrom fastai.vision.all import PILImage, ToTensor\ntorch.manual_seed(42)\n\n&lt;torch._C.Generator at 0x27ea4e6af30&gt;\nimg = PILImage.create(Path('./images/rabbit.jpg').resolve())\nimg = PILImage.create(img.resize((512, 512)))\ntfms = ToTensor()\nimg_t = tfms(img)\nprint(f\"{type(img_t) = }, {img_t.dtype = }, {img_t.shape = }\")\n\ntype(img_t) = &lt;class 'fastai.torch_core.TensorImage'&gt;, img_t.dtype = torch.uint8, img_t.shape = torch.Size([3, 512, 512])"
+  },
+  {
+    "objectID": "posts/图像分类任务数据增强可视化/index.html#v2.resize",
+    "href": "posts/图像分类任务数据增强可视化/index.html#v2.resize",
+    "title": "torchvision.transforms v2",
+    "section": "v2.Resize",
+    "text": "v2.Resize\n\ntfms = v2.Resize(size=(224, 224))\nout = tfms(img)\n\n\nshow_one(img), show_one(out)"
+  },
+  {
+    "objectID": "posts/图像分类任务数据增强可视化/index.html#v2.randomcrop",
+    "href": "posts/图像分类任务数据增强可视化/index.html#v2.randomcrop",
+    "title": "torchvision.transforms v2",
+    "section": "v2.RandomCrop",
+    "text": "v2.RandomCrop\n\ntfms = v2.RandomCrop(size=(224, 224))\nout = tfms(img)\n\nplot([img, out])"
+  },
+  {
+    "objectID": "posts/图像分类任务数据增强可视化/index.html#v2.centercrop",
+    "href": "posts/图像分类任务数据增强可视化/index.html#v2.centercrop",
+    "title": "torchvision.transforms v2",
+    "section": "v2.CenterCrop",
+    "text": "v2.CenterCrop\n\ntfms = v2.CenterCrop(size=224)\nout = tfms(img)\n\nplot([img, out])"
+  },
+  {
+    "objectID": "posts/图像分类任务数据增强可视化/index.html#v2.randomresizedcrop",
+    "href": "posts/图像分类任务数据增强可视化/index.html#v2.randomresizedcrop",
+    "title": "torchvision.transforms v2",
+    "section": "v2.RandomResizedCrop",
+    "text": "v2.RandomResizedCrop\n\ntfms = v2.RandomResizedCrop(size=(224, 224), scale=(0.08, 1), ratio=(3/4, 4/3))\nout = tfms(img)\n\nplot([img, out])"
+  },
+  {
+    "objectID": "posts/图像分类任务数据增强可视化/index.html#v2.randomhorizontalflip",
+    "href": "posts/图像分类任务数据增强可视化/index.html#v2.randomhorizontalflip",
+    "title": "torchvision.transforms v2",
+    "section": "v2.RandomHorizontalFlip",
+    "text": "v2.RandomHorizontalFlip\n\ntfms = v2.RandomHorizontalFlip(p=1)\nout = tfms(img)\n\nplot([img, out])"
+  },
+  {
+    "objectID": "posts/图像分类任务数据增强可视化/index.html#v2.randomverticalflip",
+    "href": "posts/图像分类任务数据增强可视化/index.html#v2.randomverticalflip",
+    "title": "torchvision.transforms v2",
+    "section": "v2.RandomVerticalFlip",
+    "text": "v2.RandomVerticalFlip\n\ntfms = v2.RandomVerticalFlip(p=1)\nout = tfms(img)\n\nplot([img, out])"
+  },
+  {
+    "objectID": "posts/图像分类任务数据增强可视化/index.html#v2.pad",
+    "href": "posts/图像分类任务数据增强可视化/index.html#v2.pad",
+    "title": "torchvision.transforms v2",
+    "section": "v2.Pad",
+    "text": "v2.Pad\n\ntfms = v2.Pad(padding=20, padding_mode='constant')\nout = tfms(img)\n\nplot([img, out])"
+  },
+  {
+    "objectID": "posts/图像分类任务数据增强可视化/index.html#v2.randomrotation",
+    "href": "posts/图像分类任务数据增强可视化/index.html#v2.randomrotation",
+    "title": "torchvision.transforms v2",
+    "section": "v2.RandomRotation",
+    "text": "v2.RandomRotation\n\ntfms = v2.RandomRotation(degrees=10)\nout = tfms(img)\n\nplot([img, out])"
+  },
+  {
+    "objectID": "posts/图像分类任务数据增强可视化/index.html#v2.colorjitter",
+    "href": "posts/图像分类任务数据增强可视化/index.html#v2.colorjitter",
+    "title": "torchvision.transforms v2",
+    "section": "v2.ColorJitter",
+    "text": "v2.ColorJitter\n\nbrightness：亮度\ncontrast：对比度\nsaturation：饱和度\nhue：色相\n\n\n# 亮度\ntfms = v2.ColorJitter(brightness=0.5)\nout = tfms(img)\n\nplot([img, out])\n\n\n\n\n\n\n\n\n\n# 对比度\ntfms = v2.ColorJitter(brightness=0.5, contrast=0.5)\nout = tfms(img)\n\nplot([img, out])\n\n\n\n\n\n\n\n\n\ntfms = v2.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5)\nout = tfms(img)\n\nplot([img, out])\n\n\n\n\n\n\n\n\n\ntfms = v2.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.5)\nout = tfms(img)\n\nplot([img, out])"
+  },
+  {
+    "objectID": "posts/图像分类任务数据增强可视化/index.html#v2.randaugment",
+    "href": "posts/图像分类任务数据增强可视化/index.html#v2.randaugment",
+    "title": "torchvision.transforms v2",
+    "section": "v2.RandAugment",
+    "text": "v2.RandAugment\n\ntfms = v2.RandAugment()\nout = tfms(img)\n\nplot([img, out])\n\n\n\n\n\n\n\n\n\ntfms = v2.RandAugment()\nout = tfms(img)\n\nplot([img, out])"
+  },
+  {
+    "objectID": "posts/图像分类任务数据增强可视化/index.html#v2.compose",
+    "href": "posts/图像分类任务数据增强可视化/index.html#v2.compose",
+    "title": "torchvision.transforms v2",
+    "section": "v2.Compose",
+    "text": "v2.Compose\n\ntransforms = v2.Compose([\n    v2.RandomResizedCrop(size=(224, 224), antialias=True),\n    v2.RandomHorizontalFlip(p=0.5),\n    v2.PILToTensor(),\n    v2.ToDtype(torch.float32, scale=True),\n    v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),\n])\nout = transforms(img)\n\n\nout\n\ntensor([[[-0.2684, -0.3027, -0.2856,  ..., -0.3198, -0.3883, -0.4397],\n         [-0.2513, -0.2513, -0.2513,  ..., -0.3369, -0.3883, -0.4054],\n         [-0.2342, -0.2342, -0.2513,  ..., -0.3369, -0.3712, -0.3883],\n         ...,\n         [ 0.8447,  1.3584,  1.7009,  ...,  0.6049,  0.5878,  0.5536],\n         [-0.2684, -0.0801,  0.1597,  ...,  0.5364,  0.5193,  0.5364],\n         [-0.3712, -0.2684, -0.1486,  ...,  0.5022,  0.5193,  0.5364]],\n\n        [[ 0.4153,  0.3803,  0.3803,  ...,  0.1877,  0.1702,  0.1352],\n         [ 0.4328,  0.4153,  0.3978,  ...,  0.1877,  0.1702,  0.1702],\n         [ 0.4678,  0.4503,  0.4503,  ...,  0.2052,  0.2052,  0.1877],\n         ...,\n         [ 1.9909,  2.2185,  2.3060,  ...,  1.8158,  1.7983,  1.7808],\n         [ 1.3957,  1.6408,  1.8158,  ...,  1.6933,  1.7108,  1.6933],\n         [ 1.2031,  1.4482,  1.6583,  ...,  1.6408,  1.6583,  1.6232]],\n\n        [[ 1.4200,  1.4025,  1.4200,  ...,  1.3677,  1.3502,  1.3502],\n         [ 1.4374,  1.4374,  1.4374,  ...,  1.3851,  1.3502,  1.3502],\n         [ 1.4548,  1.4722,  1.4548,  ...,  1.3502,  1.3328,  1.3502],\n         ...,\n         [ 2.3960,  2.4831,  2.5354,  ...,  2.4483,  2.4483,  2.4483],\n         [ 2.1520,  2.2566,  2.3611,  ...,  2.3437,  2.3611,  2.3786],\n         [ 2.1346,  2.2566,  2.3611,  ...,  2.2914,  2.2914,  2.3088]]])"
   },
   {
     "objectID": "posts/UserDict vs dict/index.html",
