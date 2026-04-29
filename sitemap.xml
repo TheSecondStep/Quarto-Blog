@@ -2,78 +2,82 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/index.html</loc>
-    <lastmod>2026-04-29T13:58:51.454Z</lastmod>
+    <lastmod>2026-04-29T14:17:13.149Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/ai-glossary/terms/mae.html</loc>
-    <lastmod>2026-04-29T13:58:51.440Z</lastmod>
+    <lastmod>2026-04-29T14:17:13.134Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/ai-glossary/terms/loss_func.html</loc>
-    <lastmod>2026-04-29T13:58:51.440Z</lastmod>
+    <lastmod>2026-04-29T14:17:13.134Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/ai-glossary/terms/long_tail.html</loc>
-    <lastmod>2026-04-29T13:58:51.440Z</lastmod>
+    <lastmod>2026-04-29T14:17:13.134Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/ai-glossary/terms/mse.html</loc>
-    <lastmod>2026-04-29T13:58:51.440Z</lastmod>
+    <lastmod>2026-04-29T14:17:13.134Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/ai-glossary/terms/regression.html</loc>
-    <lastmod>2026-04-29T13:58:51.440Z</lastmod>
+    <lastmod>2026-04-29T14:17:13.134Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/TheSecondStep/Quarto-Blog/posts/基于MNIST全量数据集的神经网络训练/index.html</loc>
-    <lastmod>2026-04-29T13:58:51.569Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/TheSecondStep/Quarto-Blog/posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html</loc>
-    <lastmod>2026-04-29T13:58:51.462Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/TheSecondStep/Quarto-Blog/posts/Quarto个人博客搭建/index.html</loc>
-    <lastmod>2026-04-29T13:58:51.458Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/TheSecondStep/Quarto-Blog/dl-from-scratch/index.html</loc>
-    <lastmod>2026-04-29T13:58:51.440Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/TheSecondStep/Quarto-Blog/dl-from-scratch/lessons/Introduce of machine learning.html</loc>
-    <lastmod>2026-04-29T13:58:51.440Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/TheSecondStep/Quarto-Blog/posts/图像分类任务数据增强可视化/index.html</loc>
-    <lastmod>2026-04-29T13:58:51.527Z</lastmod>
+    <loc>https://github.com/TheSecondStep/Quarto-Blog/posts/Fine-tuning for Image Classification with 🤗 Transformers/image_classification.html</loc>
+    <lastmod>2026-04-29T14:17:13.153Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/posts/UserDict vs dict/index.html</loc>
-    <lastmod>2026-04-29T13:58:51.464Z</lastmod>
+    <lastmod>2026-04-29T14:17:13.164Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/TheSecondStep/Quarto-Blog/posts/图像分类任务数据增强可视化/index.html</loc>
+    <lastmod>2026-04-29T14:17:13.235Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/TheSecondStep/Quarto-Blog/dl-from-scratch/lessons/Introduce of machine learning.html</loc>
+    <lastmod>2026-04-29T14:17:13.134Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/TheSecondStep/Quarto-Blog/dl-from-scratch/index.html</loc>
+    <lastmod>2026-04-29T14:17:13.134Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/TheSecondStep/Quarto-Blog/posts/Quarto个人博客搭建/index.html</loc>
+    <lastmod>2026-04-29T14:17:13.159Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/TheSecondStep/Quarto-Blog/posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html</loc>
+    <lastmod>2026-04-29T14:17:13.163Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/TheSecondStep/Quarto-Blog/posts/基于MNIST全量数据集的神经网络训练/index.html</loc>
+    <lastmod>2026-04-29T14:17:13.281Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/about.html</loc>
-    <lastmod>2026-04-29T13:58:51.438Z</lastmod>
+    <lastmod>2026-04-29T14:17:13.133Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/ai-glossary/terms/one-hot-encoding.html</loc>
-    <lastmod>2026-04-29T13:58:51.440Z</lastmod>
+    <lastmod>2026-04-29T14:17:13.134Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/ai-glossary/terms/overfitting.html</loc>
-    <lastmod>2026-04-29T13:58:51.440Z</lastmod>
+    <lastmod>2026-04-29T14:17:13.134Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/ai-glossary/terms/cross-entropy-loss.html</loc>
-    <lastmod>2026-04-29T13:58:51.440Z</lastmod>
+    <lastmod>2026-04-29T14:17:13.133Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/ai-glossary/terms/rmse.html</loc>
-    <lastmod>2026-04-29T13:58:51.440Z</lastmod>
+    <lastmod>2026-04-29T14:17:13.134Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/TheSecondStep/Quarto-Blog/ai-glossary/index.html</loc>
-    <lastmod>2026-04-29T13:58:51.440Z</lastmod>
+    <lastmod>2026-04-29T14:17:13.133Z</lastmod>
   </url>
 </urlset>

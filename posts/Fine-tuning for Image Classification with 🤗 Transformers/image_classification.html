@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="逃之夭夭">
+<meta name="dcterms.date" content="2026-04-29">
+
+<title>Fine-tuning for Image Classification with 🤗 Transformers – 逃之夭夭 Blog</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-529d1a61654bdf761d2a5521fb1e6582.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">逃之夭夭 Blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../ai-glossary/index.html"> <i class="bi bi-book" role="img">
+</i> 
+<span class="menu-text">AI术语表</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/TheSecondStep"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Fine-tuning for Image Classification with 🤗 Transformers</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">deep learning</div>
+                <div class="quarto-category">hf</div>
+                <div class="quarto-category">vision</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>逃之夭夭 </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">April 29, 2026</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<blockquote class="blockquote">
+<p>基于hf官方笔记本的图像分类微调流程</p>
+</blockquote>
+<blockquote class="blockquote">
+<p><a href="https://github.com/huggingface/notebooks/blob/main/examples/image_classification.ipynb">source version</a></p>
+</blockquote>
+<p>This notebook shows how to fine-tune any pretrained Vision model for Image Classification on a custom dataset. The idea is to add a randomly initialized classification head on top of a pre-trained encoder, and fine-tune the model altogether on a labeled dataset.</p>
+<p>本笔记本展示了如何在自定义数据集上，对任意预训练的视觉模型（Vision model）进行图像分类（Image Classification）微调。其思路是在预训练的编码器（encoder）顶部添加一个随机初始化的分类头（classification head），然后在带标签的数据集上整体微调整个模型。</p>
+<section id="imagefolder-图像文件夹" class="level2">
+<h2 class="anchored" data-anchor-id="imagefolder-图像文件夹">ImageFolder (图像文件夹)</h2>
+<p>This notebook leverages the <a href="https://huggingface.co/docs/datasets/v2.0.0/en/image_process#imagefolder">ImageFolder</a> feature to easily run the notebook on a custom dataset (namely, <a href="https://github.com/phelber/EuroSAT">EuroSAT</a> in this tutorial). You can either load a <code>Dataset</code> from local folders or from local/remote files, like zip or tar.</p>
+<p>本笔记本利用 <a href="https://huggingface.co/docs/datasets/v2.0.0/en/image_process#imagefolder">图像文件夹（ImageFolder）</a> 功能，方便地在自定义数据集上运行笔记本（本教程中为 <a href="https://github.com/phelber/EuroSAT">EuroSAT</a>）。你可以从本地文件夹加载一个 <code>Dataset</code>，也可以从本地/远程文件加载，例如 zip 或 tar。</p>
+</section>
+<section id="any-model-任意模型" class="level2">
+<h2 class="anchored" data-anchor-id="any-model-任意模型">Any model (任意模型)</h2>
+<p>This notebook is built to run on any image classification dataset with any vision model checkpoint from the <a href="https://huggingface.co/">Model Hub</a> as long as that model has a version with a Image Classification head, such as: * <a href="https://huggingface.co/docs/transformers/model_doc/vit#transformers.ViTForImageClassification">ViT</a> * <a href="https://huggingface.co/docs/transformers/model_doc/swin#transformers.SwinForImageClassification">Swin Transformer</a> * <a href="https://huggingface.co/docs/transformers/master/en/model_doc/convnext#transformers.ConvNextForImageClassification">ConvNeXT</a></p>
+<ul>
+<li>in short, any model supported by <a href="https://huggingface.co/docs/transformers/model_doc/auto#transformers.AutoModelForImageClassification">AutoModelForImageClassification</a>.</li>
+</ul>
+<p>这个 notebook 旨在运行于任何图像分类（Image Classification）数据集，并且可以搭配 <a href="https://huggingface.co/">Model Hub</a> 中的任意 vision model checkpoint，只要该模型有带 Image Classification head 的版本，例如： * <a href="https://huggingface.co/docs/transformers/model_doc/vit#transformers.ViTForImageClassification">ViT</a> * <a href="https://huggingface.co/docs/transformers/model_doc/swin#transformers.SwinForImageClassification">Swin Transformer</a> * <a href="https://huggingface.co/docs/transformers/master/en/model_doc/convnext#transformers.ConvNextForImageClassification">ConvNeXT</a></p>
+<ul>
+<li>简而言之，任何受 <a href="https://huggingface.co/docs/transformers/model_doc/auto#transformers.AutoModelForImageClassification">AutoModelForImageClassification</a> 支持的模型都可以。</li>
+</ul>
+</section>
+<section id="data-augmentation-数据增强" class="level2">
+<h2 class="anchored" data-anchor-id="data-augmentation-数据增强">Data augmentation (数据增强)</h2>
+<p>This notebook leverages Torchvision’s <a href="https://pytorch.org/vision/stable/transforms.html">transforms</a> for applying data augmentation - note that we do provide alternative notebooks which leverage other libraries, including:</p>
+<ul>
+<li><a href="https://github.com/huggingface/notebooks/blob/main/examples/image_classification_albumentations.ipynb">Albumentations</a></li>
+<li><a href="https://github.com/huggingface/notebooks/blob/main/examples/image_classification_kornia.ipynb">Kornia</a></li>
+<li><a href="https://github.com/huggingface/notebooks/blob/main/examples/image_classification_imgaug.ipynb">imgaug</a>.</li>
+</ul>
+<hr>
+<p>Depending on the model and the GPU you are using, you might need to adjust the batch size to avoid out-of-memory errors. Set those two parameters, then the rest of the notebook should run smoothly.</p>
+<p>In this notebook, we’ll fine-tune from the https://huggingface.co/microsoft/swin-tiny-patch4-window7-224 checkpoint, but note that there are many, many more available on the <a href="https://huggingface.co/models?other=vision">hub</a>.</p>
+<p>本 notebook 使用 Torchvision 的 <a href="https://pytorch.org/vision/stable/transforms.html">transforms</a> 来进行数据增强（data augmentation）——注意，我们也提供了使用其他库的替代 notebook，包括：</p>
+<ul>
+<li><a href="https://github.com/huggingface/notebooks/blob/main/examples/image_classification_albumentations.ipynb">Albumentations</a></li>
+<li><a href="https://github.com/huggingface/notebooks/blob/main/examples/image_classification_kornia.ipynb">Kornia</a></li>
+<li><a href="https://github.com/huggingface/notebooks/blob/main/examples/image_classification_imgaug.ipynb">imgaug</a>。</li>
+</ul>
+<hr>
+<p>根据你使用的模型和 GPU，可能需要调整批量大小（batch size），以避免内存不足（out-of-memory）错误。设置好这两个参数后，notebook 的其余部分应该就能顺利运行。</p>
+<p>在这个 notebook 中，我们将从 https://huggingface.co/microsoft/swin-tiny-patch4-window7-224 这个 checkpoint 进行微调（fine-tune），但请注意，在 <a href="https://huggingface.co/models?other=vision">hub</a> 上还有很多很多其他可用的模型。</p>
+<blockquote class="blockquote">
+<p>改为使用timm/convnext_tiny.in12k_ft_in1k</p>
+</blockquote>
+<div id="f8f20a85" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>model_checkpoint <span class="op">=</span> <span class="st">"timm/convnext_tiny.in12k_ft_in1k"</span> <span class="co"># pre-trained model from which to fine-tune</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>batch_size <span class="op">=</span> <span class="dv">32</span> <span class="co"># batch size for training and evaluation</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Before we start, let’s install the <code>datasets</code>, <code>transformers</code> and <code>accelerate</code> libraries.</p>
+<p>在开始之前，让我们安装 <code>datasets</code>、<code>transformers</code> 和 <code>accelerate</code> 库。</p>
+<div id="f2a42640" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># !pip install -q datasets transformers accelerate evaluate</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>If you’re opening this notebook locally, make sure your environment has an install from the last version of those libraries.</p>
+<p>To be able to share your model with the community and generate results like the one shown in the picture below via the inference API, there are a few more steps to follow.</p>
+<p>First you have to store your authentication token from the Hugging Face website (sign up <a href="https://huggingface.co/join">here</a> if you haven’t already!) then execute the following cell and input your token:</p>
+<p>如果你要在本地打开这个 notebook，请确保你的环境中安装的是这些库的最新版本。</p>
+<p>为了能够通过推理 API（inference API）与社区共享你的模型，并生成如下图所示的结果，还需要再执行几个步骤。</p>
+<p>首先，你需要从 Hugging Face 网站保存你的认证 token（如果你还没有注册，可以先<a href="https://huggingface.co/join">在这里</a>注册！），然后运行下面这个单元格，并输入你的 token：</p>
+<div id="2a8d46a4" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> huggingface_hub <span class="im">import</span> notebook_login</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>notebook_login()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Then you need to install Git-LFS to upload your model checkpoints:</p>
+<p>然后你需要安装 Git-LFS 才能上传模型检查点：</p>
+<div id="4f28babd" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># %%capture</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># !sudo apt -qq install git-lfs</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># !git config --global credential.helper store</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="fine-tuning-a-model-on-an-image-classification-task-在图像分类任务上微调模型" class="level2">
+<h2 class="anchored" data-anchor-id="fine-tuning-a-model-on-an-image-classification-task-在图像分类任务上微调模型">Fine-tuning a model on an image classification task (在图像分类任务上微调模型)</h2>
+<p>In this notebook, we will see how to fine-tune one of the <a href="https://github.com/huggingface/transformers">🤗 Transformers</a> vision models on an Image Classification dataset.</p>
+<p>Given an image, the goal is to predict an appropriate class for it, like “tiger”. The screenshot below is taken from a <a href="https://huggingface.co/google/vit-base-patch16-224">ViT fine-tuned on ImageNet-1k</a> - try out the inference widget!</p>
+<p>在这个 notebook 中，我们将了解如何在图像分类（Image Classification）数据集上微调（fine-tune）一个 <a href="https://github.com/huggingface/transformers">🤗 Transformers</a> 视觉模型（vision model）。</p>
+<p>给定一张图像，目标是预测它所属的合适类别，比如“tiger”。下面的截图来自一个 <a href="https://huggingface.co/google/vit-base-patch16-224">在 ImageNet-1k 上微调的 ViT</a>——不妨试试这个推理组件（inference widget）！</p>
+<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/tiger_image.png" alt="drawing" width="600"></p>
+<section id="loading-the-dataset-加载数据集" class="level3">
+<h3 class="anchored" data-anchor-id="loading-the-dataset-加载数据集">Loading the dataset (加载数据集)</h3>
+<p>We will use the <a href="https://github.com/huggingface/datasets">🤗 Datasets</a> library’s <a href="https://huggingface.co/docs/datasets/v2.0.0/en/image_process#imagefolder">ImageFolder</a> feature to download our custom dataset into a DatasetDict.</p>
+<p>In this case, the EuroSAT dataset is hosted remotely, so we provide the <code>data_files</code> argument. Alternatively, if you have local folders with images, you can load them using the <code>data_dir</code> argument.</p>
+<p>我们将使用 <a href="https://github.com/huggingface/datasets">🤗 Datasets</a> 库的 <a href="https://huggingface.co/docs/datasets/v2.0.0/en/image_process#imagefolder">ImageFolder</a> 功能，把自定义数据集下载到一个 DatasetDict 中。</p>
+<p>在这种情况下，EuroSAT 数据集托管在远程，因此我们需要提供 <code>data_files</code> 参数。或者，如果你本地有包含图像的文件夹，也可以使用 <code>data_dir</code> 参数来加载它们。</p>
+<div id="261bbdca" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datasets <span class="im">import</span> load_dataset </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># load a custom dataset from local/remote files or folders using the ImageFolder feature</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># option 1: local/remote files</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> load_dataset(<span class="st">"jonathan-roberts1/EuroSAT"</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># note that you can also provide several splits:</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># dataset = load_dataset("imagefolder", data_files={"train": ["path/to/file1", "path/to/file2"], "test": ["path/to/file3", "path/to/file4"]})</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># note that you can push your dataset to the hub very easily (and reload afterwards using load_dataset)!</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co"># dataset.push_to_hub("nielsr/eurosat")</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"># dataset.push_to_hub("nielsr/eurosat", private=True)</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co"># option 2: local folder</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co"># dataset = load_dataset("imagefolder", data_dir="path_to_folder")</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co"># option 3: just load any existing dataset from the hub, like CIFAR-10, FashionMNIST ...</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co"># dataset = load_dataset("cifar10")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Let us also load the Accuracy metric, which we’ll use to evaluate our model both during and after training.</p>
+<p>我们也来加载准确率（Accuracy）指标，它将用于在训练过程中以及训练结束后评估我们的模型。</p>
+<div id="17caf8f8" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> evaluate</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>metric <span class="op">=</span> evaluate.load(<span class="st">"accuracy"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The <code>dataset</code> object itself is a <a href="https://huggingface.co/docs/datasets/package_reference/main_classes.html#datasetdict"><code>DatasetDict</code></a>, which contains one key per split (in this case, only “train” for a training split).</p>
+<p><code>dataset</code> 对象本身是一个 <a href="https://huggingface.co/docs/datasets/package_reference/main_classes.html#datasetdict"><code>DatasetDict</code></a>，它为每个划分各包含一个键（在这里，训练划分只有 <code>"train"</code>）。</p>
+<div id="26ec2d93" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dataset</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>DatasetDict({
+    train: Dataset({
+        features: ['image', 'label'],
+        num_rows: 27000
+    })
+})</code></pre>
+</div>
+</div>
+<p>To access an actual element, you need to select a split first, then give an index:</p>
+<p>要访问某个实际元素，你需要先选择一个拆分（split），然后给出一个索引：</p>
+<div id="d489eedd" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>example <span class="op">=</span> dataset[<span class="st">"train"</span>][<span class="dv">10</span>]</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>example</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>{'image': &lt;PIL.JpegImagePlugin.JpegImageFile image mode=RGB size=64x64&gt;,
+ 'label': 0}</code></pre>
+</div>
+</div>
+<p>Each example consists of an image and a corresponding label. We can also verify this by checking the features of the dataset:</p>
+<p>每个样本都由一张图像和相应的标签组成。我们也可以通过检查该数据集（dataset）的特征（features）来验证这一点：</p>
+<div id="5db0f733" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>dataset[<span class="st">"train"</span>].features</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>{'image': Image(mode=None, decode=True),
+ 'label': ClassLabel(names=['annual crop', 'forest', 'herbaceous vegetation', 'highway', 'industrial', 'pasture', 'permanent crop', 'residential', 'river', 'sea or lake'])}</code></pre>
+</div>
+</div>
+<p>The cool thing is that we can directly view the image (as the ‘image’ field is an <a href="https://huggingface.co/docs/datasets/package_reference/main_classes.html#datasets.Image">Image feature</a>), as follows:</p>
+<p>有趣的是，我们可以直接查看图像（因为 <code>image</code> 字段是一个<a href="https://huggingface.co/docs/datasets/package_reference/main_classes.html#datasets.Image">图像特征（Image feature）</a>），如下所示：</p>
+<div id="3ce355ce" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>example[<span class="st">'image'</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="image_classification_files/figure-html/cell-11-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Let’s make it a little bigger as the images in the EuroSAT dataset are of low resolution (64x64 pixels):</p>
+<p>让我们把它稍微放大一点，因为 EuroSAT 数据集中的图像分辨率较低（64×64 像素）：</p>
+<div id="ab47f0e9" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>example[<span class="st">'image'</span>].resize((<span class="dv">200</span>, <span class="dv">200</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="image_classification_files/figure-html/cell-12-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Let’s print the corresponding label:</p>
+<p>让我们打印对应的标签：</p>
+<div id="a47f6ac8" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>example[<span class="st">'label'</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0</code></pre>
+</div>
+</div>
+<p>As you can see, the <code>label</code> field is not an actual string label. By default the <code>ClassLabel</code> fields are encoded into integers for convenience:</p>
+<p>正如你所见，<code>label</code> 字段并不是实际的字符串标签。默认情况下，<code>ClassLabel</code> 字段会被编码为整数，方便使用：</p>
+<div id="78adf544" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>dataset[<span class="st">"train"</span>].features[<span class="st">"label"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>ClassLabel(names=['annual crop', 'forest', 'herbaceous vegetation', 'highway', 'industrial', 'pasture', 'permanent crop', 'residential', 'river', 'sea or lake'])</code></pre>
+</div>
+</div>
+<ol type="1">
+<li><code>annual crop</code> → <strong>一年生作物</strong></li>
+<li><code>forest</code> → <strong>森林</strong></li>
+<li><code>herbaceous vegetation</code> → <strong>草本植被</strong></li>
+<li><code>highway</code> → <strong>公路</strong></li>
+<li><code>industrial</code> → <strong>工业区</strong></li>
+<li><code>pasture</code> → <strong>牧场</strong></li>
+<li><code>permanent crop</code> → <strong>多年生作物</strong></li>
+<li><code>residential</code> → <strong>住宅区</strong></li>
+<li><code>river</code> → <strong>河流</strong></li>
+<li><code>sea or lake</code> → <strong>海洋或湖泊</strong></li>
+</ol>
+<p>Let’s create an <code>id2label</code> dictionary to decode them back to strings and see what they are. The inverse <code>label2id</code> will be useful too, when we load the model later.</p>
+<p>让我们创建一个 <code>id2label</code> 字典，把它们解码回字符串，看看它们分别是什么。反向的 <code>label2id</code> 之后在加载模型时也会很有用。</p>
+<div id="90565d0e" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> dataset[<span class="st">"train"</span>].features[<span class="st">"label"</span>].names</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>label2id, id2label <span class="op">=</span> <span class="bu">dict</span>(), <span class="bu">dict</span>()</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, label <span class="kw">in</span> <span class="bu">enumerate</span>(labels):</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    label2id[label] <span class="op">=</span> i</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    id2label[i] <span class="op">=</span> label</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>id2label[<span class="dv">2</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'herbaceous vegetation'</code></pre>
+</div>
+</div>
+</section>
+<section id="preprocessing-the-data-数据预处理" class="level3">
+<h3 class="anchored" data-anchor-id="preprocessing-the-data-数据预处理">Preprocessing the data (数据预处理)</h3>
+<p>Before we can feed these images to our model, we need to preprocess them.</p>
+<p>Preprocessing images typically comes down to (1) resizing them to a particular size (2) normalizing the color channels (R,G,B) using a mean and standard deviation. These are referred to as <strong>image transformations</strong>.</p>
+<p>In addition, one typically performs what is called <strong>data augmentation</strong> during training (like random cropping and flipping) to make the model more robust and achieve higher accuracy. Data augmentation is also a great technique to increase the size of the training data.</p>
+<p>We will use <code>torchvision.transforms</code> for the image transformations/data augmentation in this tutorial, but note that one can use any other package (like <a href="https://albumentations.ai/">albumentations</a>, <a href="https://github.com/aleju/imgaug">imgaug</a>, <a href="https://kornia.readthedocs.io/en/latest/">Kornia</a> etc.).</p>
+<p>To make sure we (1) resize to the appropriate size (2) use the appropriate image mean and standard deviation for the model architecture we are going to use, we instantiate what is called an image processor with the <code>AutoImageProcessor.from_pretrained</code> method.</p>
+<p>This image processor is a minimal preprocessor that can be used to prepare images for inference.</p>
+<p>在将这些图像输入模型之前，我们需要先对它们进行预处理。</p>
+<p>图像预处理通常包括：（1）将图像调整到特定尺寸；（2）使用均值和标准差对颜色通道（R、G、B）进行归一化。这些操作统称为<strong>图像变换（image transformations）</strong>。</p>
+<p>此外，在训练过程中，通常还会进行<strong>数据增强（data augmentation）</strong>（例如随机裁剪和翻转），以提高模型的鲁棒性并获得更高的准确率。数据增强也是扩大训练数据规模的一种很好的技术。</p>
+<p>在本教程中，我们将使用 <code>torchvision.transforms</code> 来完成图像变换/数据增强，但请注意，也可以使用其他任何包（例如 <a href="https://albumentations.ai/">albumentations</a>、<a href="https://github.com/aleju/imgaug">imgaug</a>、<a href="https://kornia.readthedocs.io/en/latest/">Kornia</a> 等）。</p>
+<p>为了确保我们（1）将图像调整到合适的尺寸，（2）针对将要使用的模型架构采用合适的图像均值和标准差，我们会使用 <code>AutoImageProcessor.from_pretrained</code> 方法实例化一个称为<strong>图像处理器（image processor）</strong>的对象。</p>
+<p>这个图像处理器是一个轻量级的预处理器，可用于为推理准备图像。</p>
+<div id="65413c59" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoImageProcessor</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>image_processor  <span class="op">=</span> AutoImageProcessor.from_pretrained(model_checkpoint)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>image_processor </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Requested torchvision backend is not available. Falling back to pil backend.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>TimmWrapperImageProcessor {
+  "architecture": "convnext_tiny",
+  "data_config": {
+    "crop_mode": "center",
+    "crop_pct": 0.95,
+    "input_size": [
+      3,
+      224,
+      224
+    ],
+    "interpolation": "bicubic",
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  },
+  "image_processor_type": "TimmWrapperImageProcessor"
+}</code></pre>
+</div>
+</div>
+<p>The Datasets library is made for processing data very easily. We can write custom functions, which can then be applied on an entire dataset (either using <a href="https://huggingface.co/docs/datasets/package_reference/main_classes.html?highlight=map#datasets.Dataset.map"><code>.map()</code></a> or <a href="https://huggingface.co/docs/datasets/package_reference/main_classes.html?highlight=set_transform#datasets.Dataset.set_transform"><code>.set_transform()</code></a>).</p>
+<p>Here we define 2 separate functions, one for training (which includes data augmentation) and one for validation (which only includes resizing, center cropping and normalizing).</p>
+<p>Datasets 库非常适合轻松处理数据。我们可以编写自定义函数，然后将它们应用到整个数据集上（可以使用 <a href="https://huggingface.co/docs/datasets/package_reference/main_classes.html?highlight=map#datasets.Dataset.map"><code>.map()</code></a> 或 <a href="https://huggingface.co/docs/datasets/package_reference/main_classes.html?highlight=set_transform#datasets.Dataset.set_transform"><code>.set_transform()</code></a>）。</p>
+<p>这里我们定义了两个独立的函数：一个用于训练（包括数据增强），另一个用于验证（只包括调整大小、中心裁剪和归一化）。</p>
+<div id="173d8db2" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torchvision.transforms <span class="im">import</span> (</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    CenterCrop,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    Compose,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    Normalize,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    RandomHorizontalFlip,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    RandomResizedCrop,</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    Resize,</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    ToTensor,</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="9912c3fd" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>normalize <span class="op">=</span> Normalize(mean<span class="op">=</span>image_processor.data_config[<span class="st">'mean'</span>], std<span class="op">=</span>image_processor.data_config[<span class="st">'std'</span>])</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>size <span class="op">=</span> <span class="bu">int</span>(image_processor.data_config[<span class="st">'input_size'</span>][<span class="dv">1</span>] <span class="op">/</span> image_processor.data_config[<span class="st">'crop_pct'</span>])</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>crop_size <span class="op">=</span> image_processor.data_config[<span class="st">"input_size"</span>][<span class="dv">1</span>]</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>max_size <span class="op">=</span> <span class="va">None</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="c8e035c6" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>train_transforms <span class="op">=</span> Compose(</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>        [</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>            RandomResizedCrop(crop_size),</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>            RandomHorizontalFlip(),</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>            ToTensor(),</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>            normalize,</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="15b0f47d" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>val_transforms <span class="op">=</span> Compose(</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>        [</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>            Resize(size),</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>            CenterCrop(crop_size),</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>            ToTensor(),</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>            normalize,</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="86da9a17" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> preprocess_train(example_batch):</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Apply train_transforms across a batch."""</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    example_batch[<span class="st">"pixel_values"</span>] <span class="op">=</span> [</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>        train_transforms(image.convert(<span class="st">"RGB"</span>)) <span class="cf">for</span> image <span class="kw">in</span> example_batch[<span class="st">"image"</span>]</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> example_batch</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="024cb284" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> preprocess_val(example_batch):</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Apply val_transforms across a batch."""</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    example_batch[<span class="st">"pixel_values"</span>] <span class="op">=</span> [val_transforms(image.convert(<span class="st">"RGB"</span>)) <span class="cf">for</span> image <span class="kw">in</span> example_batch[<span class="st">"image"</span>]]</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> example_batch</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Next, we can preprocess our dataset by applying these functions. We will use the <code>set_transform</code> functionality, which allows to apply the functions above on-the-fly (meaning that they will only be applied when the images are loaded in RAM).</p>
+<p>接下来，我们可以通过应用这些函数来预处理我们的数据集。我们将使用 <code>set_transform</code> 功能，它允许我们按需应用上面的函数（也就是说，这些函数只会在图像加载到 RAM 中时才被执行）。</p>
+<div id="693585f5" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># split up training into training + validation</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>splits <span class="op">=</span> dataset[<span class="st">"train"</span>].train_test_split(test_size<span class="op">=</span><span class="fl">0.1</span>)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>train_ds <span class="op">=</span> splits[<span class="st">'train'</span>]</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>val_ds <span class="op">=</span> splits[<span class="st">'test'</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="22b109be" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>train_ds.set_transform(preprocess_train)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>val_ds.set_transform(preprocess_val)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Let’s access an element to see that we’ve added a “pixel_values” feature:</p>
+<p>让我们访问一个元素，看看我们是否已经添加了一个“pixel_values”特征：</p>
+<div id="7b93e539" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torchvision.transforms.functional <span class="im">import</span> to_pil_image</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> to_pil_image(train_ds[<span class="dv">0</span>][<span class="st">'pixel_values'</span>])</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>img</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="image_classification_files/figure-html/cell-25-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="training-the-model-训练模型" class="level3">
+<h3 class="anchored" data-anchor-id="training-the-model-训练模型">Training the model (训练模型)</h3>
+<p>Now that our data is ready, we can download the pretrained model and fine-tune it. For classification we use the <code>AutoModelForImageClassification</code> class. Calling the <code>from_pretrained</code> method on it will download and cache the weights for us. As the label ids and the number of labels are dataset dependent, we pass <code>label2id</code>, and <code>id2label</code> alongside the <code>model_checkpoint</code> here. This will make sure a custom classification head will be created (with a custom number of output neurons).</p>
+<p>NOTE: in case you’re planning to fine-tune an already fine-tuned checkpoint, like <a href="https://huggingface.co/facebook/convnext-tiny-224">facebook/convnext-tiny-224</a> (which has already been fine-tuned on ImageNet-1k), then you need to provide the additional argument <code>ignore_mismatched_sizes=True</code> to the <code>from_pretrained</code> method. This will make sure the output head (with 1000 output neurons) is thrown away and replaced by a new, randomly initialized classification head that includes a custom number of output neurons. You don’t need to specify this argument in case the pre-trained model doesn’t include a head.</p>
+<p>现在数据已经准备好了，我们可以下载预训练模型（pretrained model）并对其进行微调（fine-tune）。对于分类，我们使用 <code>AutoModelForImageClassification</code> 类。对它调用 <code>from_pretrained</code> 方法会自动为我们下载并缓存权重。由于标签 id 和标签数量取决于数据集，这里我们会在 <code>model_checkpoint</code> 一起传入 <code>label2id</code> 和 <code>id2label</code>。这样可以确保系统创建一个自定义分类头（custom classification head）（带有自定义数量的输出神经元）。</p>
+<p>注意：如果你打算对一个已经微调过的 checkpoint 再次微调，比如 <a href="https://huggingface.co/facebook/convnext-tiny-224">facebook/convnext-tiny-224</a>（它已经在 ImageNet-1k 上完成过微调），那么你需要在 <code>from_pretrained</code> 方法中额外提供参数 <code>ignore_mismatched_sizes=True</code>。这会确保原来的输出头（有 1000 个输出神经元）被丢弃，并替换为一个新的、随机初始化的分类头，其中包含自定义数量的输出神经元。如果预训练模型本身不包含头部，那么你就不需要指定这个参数。</p>
+<div id="beda993f" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoModelForImageClassification, TrainingArguments, Trainer</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> AutoModelForImageClassification.from_pretrained(</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    model_checkpoint, </span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    label2id<span class="op">=</span>label2id,</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    id2label<span class="op">=</span>id2label,</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>    ignore_mismatched_sizes <span class="op">=</span> <span class="va">True</span>, <span class="co"># provide this in case you're planning to fine-tune an already fine-tuned checkpoint</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    num_labels<span class="op">=</span><span class="dv">10</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-bold">TimmWrapperForImageClassification LOAD REPORT</span> from: timm/convnext_tiny.in12k_ft_in1k
+
+Key                       | Status   |                                                                                           
+
+--------------------------+----------+-------------------------------------------------------------------------------------------
+
+timm_model.head.fc.weight | MISMATCH | Reinit due to size mismatch - ckpt: torch.Size([1000, 768]) vs model:torch.Size([10, 768])
+
+timm_model.head.fc.bias   | MISMATCH | Reinit due to size mismatch - ckpt: torch.Size([1000]) vs model:torch.Size([10])          
+
+
+
+Notes:
+
+- MISMATCH: ckpt weights were loaded, but they did not match the original empty weight shapes.
+</pre>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Loading weights:   0%|          | 0/182 [00:00&lt;?, ?it/s]</code></pre>
+</div>
+</div>
+<div id="a65d317d" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>model.config.label2id</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>{'annual crop': 0,
+ 'forest': 1,
+ 'herbaceous vegetation': 2,
+ 'highway': 3,
+ 'industrial': 4,
+ 'pasture': 5,
+ 'permanent crop': 6,
+ 'residential': 7,
+ 'river': 8,
+ 'sea or lake': 9}</code></pre>
+</div>
+</div>
+<p>The warning is telling us we are throwing away some weights (the weights and bias of the <code>classifier</code> layer) and randomly initializing some other (the weights and bias of a new <code>classifier</code> layer). This is expected in this case, because we are adding a new head for which we don’t have pretrained weights, so the library warns us we should fine-tune this model before using it for inference, which is exactly what we are going to do.</p>
+<p>这个警告告诉我们，我们丢弃了一些权重（<code>classifier</code> 层的权重和偏置），并随机初始化了另外一些权重（一个新的 <code>classifier</code> 层的权重和偏置）。在这种情况下，这正是预期行为，因为我们正在添加一个新的头部，而它没有预训练权重，所以库会提醒我们，在将这个模型用于推理之前，应该先对它进行微调，而这正是我们接下来要做的。</p>
+<p>To instantiate a <code>Trainer</code>, we will need to define the training configuration and the evaluation metric. The most important is the <a href="https://huggingface.co/transformers/main_classes/trainer.html#transformers.TrainingArguments"><code>TrainingArguments</code></a>, which is a class that contains all the attributes to customize the training. It requires one folder name, which will be used to save the checkpoints of the model.</p>
+<p>Most of the training arguments are pretty self-explanatory, but one that is quite important here is <code>remove_unused_columns=False</code>. This one will drop any features not used by the model’s call function. By default it’s <code>True</code> because usually it’s ideal to drop unused feature columns, making it easier to unpack inputs into the model’s call function. But, in our case, we need the unused features (‘image’ in particular) in order to create ‘pixel_values’.</p>
+<p>要实例化一个 <code>Trainer</code>，我们需要定义训练配置和评估指标。最重要的是 <a href="https://huggingface.co/transformers/main_classes/trainer.html#transformers.TrainingArguments"><code>TrainingArguments</code></a>，它是一个包含所有用于自定义训练属性的类。它需要一个文件夹名称，用于保存模型的检查点（checkpoint）。</p>
+<p>大多数训练参数都很直观，但这里有一个非常重要的是 <code>remove_unused_columns=False</code>。这个参数会删除模型的 <code>call</code> 函数未使用的任何特征。默认情况下它为 <code>True</code>，因为通常删除未使用的特征列是理想的，这样更容易将输入解包到模型的 <code>call</code> 函数中。但在我们的场景里，我们需要这些未使用的特征（尤其是 <code>image</code>），以便创建 <code>pixel_values</code>。</p>
+<div id="0432ddcb" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>model_name <span class="op">=</span> model_checkpoint.split(<span class="st">"/"</span>)[<span class="op">-</span><span class="dv">1</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="6de68f71" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> TrainingArguments(</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"</span><span class="sc">{</span>model_name<span class="sc">}</span><span class="ss">-finetuned-eurosat"</span>,</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    remove_unused_columns<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    eval_strategy <span class="op">=</span> <span class="st">"epoch"</span>,</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    save_strategy <span class="op">=</span> <span class="st">"epoch"</span>,</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    learning_rate<span class="op">=</span><span class="fl">5e-5</span>,</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    per_device_train_batch_size<span class="op">=</span>batch_size,</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    gradient_accumulation_steps<span class="op">=</span><span class="dv">4</span>,</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>    per_device_eval_batch_size<span class="op">=</span>batch_size,</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>    num_train_epochs<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>    warmup_steps<span class="op">=</span><span class="dv">57</span>,</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>    logging_steps<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>    load_best_model_at_end<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    metric_for_best_model<span class="op">=</span><span class="st">"accuracy"</span>,</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>    push_to_hub<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Here we set the evaluation to be done at the end of each epoch, tweak the learning rate, use the <code>batch_size</code> defined at the top of the notebook and customize the number of epochs for training, as well as the weight decay. Since the best model might not be the one at the end of training, we ask the <code>Trainer</code> to load the best model it saved (according to <code>metric_name</code>) at the end of training.</p>
+<p>The last argument <code>push_to_hub</code> allows the Trainer to push the model to the <a href="https://huggingface.co/models">Hub</a> regularly during training. Remove it if you didn’t follow the installation steps at the top of the notebook. If you want to save your model locally with a name that is different from the name of the repository, or if you want to push your model under an organization and not your name space, use the <code>hub_model_id</code> argument to set the repo name (it needs to be the full name, including your namespace: for instance <code>"nielsr/vit-finetuned-cifar10"</code> or <code>"huggingface/nielsr/vit-finetuned-cifar10"</code>).</p>
+<p>这里我们将评估设置为在每个 epoch 结束时进行，调整学习率，使用笔记本顶部定义的 <code>batch_size</code>，并自定义训练的 epoch 数以及权重衰减（weight decay）。由于最佳模型未必是训练结束时的那个，我们让 <code>Trainer</code> 在训练结束时加载它保存的最佳模型（根据 <code>metric_name</code> 判定）。</p>
+<p>最后一个参数 <code>push_to_hub</code> 允许 <code>Trainer</code> 在训练过程中定期将模型推送到 <a href="https://huggingface.co/models">Hub</a>。如果你没有按照笔记本开头的安装步骤操作，就把它删除。如果你想用一个不同于仓库名的名称把模型保存在本地，或者想把模型推送到某个组织（organization）下而不是你自己的命名空间（namespace）下，可以使用 <code>hub_model_id</code> 参数来设置仓库名（它需要是完整名称，包括你的命名空间；例如 <code>"nielsr/vit-finetuned-cifar10"</code> 或 <code>"huggingface/nielsr/vit-finetuned-cifar10"</code>）。</p>
+<p>Next, we need to define a function for how to compute the metrics from the predictions, which will just use the <code>metric</code> we loaded earlier. The only preprocessing we have to do is to take the argmax of our predicted logits:</p>
+<p>接下来，我们需要定义一个函数，用于根据预测结果计算指标，这里只会使用我们之前加载的 <code>metric</code>。我们唯一需要做的预处理，就是对预测的 logits 取 <code>argmax</code>：</p>
+<div id="9655245c" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="co"># the compute_metrics function takes a Named Tuple as input:</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="co"># predictions, which are the logits of the model as Numpy arrays,</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="co"># and label_ids, which are the ground-truth labels as Numpy arrays.</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_metrics(eval_pred):</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Computes accuracy on a batch of predictions"""</span></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    predictions <span class="op">=</span> np.argmax(eval_pred.predictions, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> metric.compute(predictions<span class="op">=</span>predictions, references<span class="op">=</span>eval_pred.label_ids)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>We also define a <code>collate_fn</code>, which will be used to batch examples together. Each batch consists of 2 keys, namely <code>pixel_values</code> and <code>labels</code>.</p>
+<p>我们还定义了一个 <code>collate_fn</code>，它将用于把样本组装成一个批次。<br>
+每个批次包含 2 个键，分别是 <code>pixel_values</code> 和 <code>labels</code>。</p>
+<div id="09d14c7e" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> collate_fn(examples):</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>    pixel_values <span class="op">=</span> torch.stack([example[<span class="st">"pixel_values"</span>] <span class="cf">for</span> example <span class="kw">in</span> examples])</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>    labels <span class="op">=</span> torch.tensor([example[<span class="st">"label"</span>] <span class="cf">for</span> example <span class="kw">in</span> examples])</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"pixel_values"</span>: pixel_values, <span class="st">"labels"</span>: labels}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Then we just need to pass all of this along with our datasets to the <code>Trainer</code>:</p>
+<p>然后，我们只需将所有这些以及我们的数据集一起传递给 <code>Trainer</code>：</p>
+<div id="164b298d" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>trainer <span class="op">=</span> Trainer(</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>    model,</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>    args,</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>    train_dataset<span class="op">=</span>train_ds,</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    eval_dataset<span class="op">=</span>val_ds,</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>    processing_class<span class="op">=</span>image_processor,</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>    compute_metrics<span class="op">=</span>compute_metrics,</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>    data_collator<span class="op">=</span>collate_fn,</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>You might wonder why we pass along the <code>image_processor</code> as a tokenizer when we already preprocessed our data. This is only to make sure the image processor configuration file (stored as JSON) will also be uploaded to the repo on the hub.</p>
+<p>你可能会想，既然我们已经预处理了数据，为什么还要把 <code>image_processor</code> 当作分词器（tokenizer）传下去。这么做只是为了确保图像处理器（image processor）的配置文件（以 JSON 存储）也会一并上传到 hub 上的 repo。</p>
+<p>Now we can finetune our model by calling the <code>train</code> method:</p>
+<p>现在我们可以通过调用 <code>train</code> 方法来微调我们的模型：</p>
+<div id="2a04b1f7" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>train_results <span class="op">=</span> trainer.train()</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="co"># rest is optional but nice to have</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>trainer.save_model()</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>trainer.log_metrics(<span class="st">"train"</span>, train_results.metrics)</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>trainer.save_metrics(<span class="st">"train"</span>, train_results.metrics)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>trainer.save_state()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+      
+      <progress value="570" max="570" style="width:300px; height:20px; vertical-align: middle;"></progress>
+      [570/570 13:04, Epoch 3/3]
+    </div>
+    
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Epoch</th>
+<th data-quarto-table-cell-role="th">Training Loss</th>
+<th data-quarto-table-cell-role="th">Validation Loss</th>
+<th data-quarto-table-cell-role="th">Accuracy</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>0.192660</td>
+<td>0.095770</td>
+<td>0.964444</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>0.142947</td>
+<td>0.050706</td>
+<td>0.984444</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>0.087878</td>
+<td>0.042748</td>
+<td>0.987407</td>
+</tr>
+</tbody>
+</table>
+<p>
+</p></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The `save_pretrained` method is disabled for TimmWrapperImageProcessor. The image processor configuration is saved directly in `config.json` when `save_pretrained` is called for saving the model.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Writing model shards:   0%|          | 0/1 [00:00&lt;?, ?it/s]
+Writing model shards:   0%|          | 0/1 [00:00&lt;?, ?it/s]
+Writing model shards:   0%|          | 0/1 [00:00&lt;?, ?it/s]
+Writing model shards:   0%|          | 0/1 [00:00&lt;?, ?it/s]
+Writing model shards:   0%|          | 0/1 [00:00&lt;?, ?it/s]
+Processing Files (0 / 0): |          |  0.00B /  0.00B            
+New Data Upload: |          |  0.00B /  0.00B            
+***** train metrics *****
+  epoch                    =          3.0
+  total_flos               = 1706378437GF
+  train_loss               =       0.2645
+  train_runtime            =   0:13:08.64
+  train_samples_per_second =       92.437
+  train_steps_per_second   =        0.723</code></pre>
+</div>
+</div>
+<p>We can check with the <code>evaluate</code> method that our <code>Trainer</code> did reload the best model properly (if it was not the last one):</p>
+<p>我们可以通过 <code>evaluate</code> 方法来检查我们的 <code>Trainer</code> 是否已正确重新加载最佳模型（如果它不是最后一个模型的话）：</p>
+<div id="5fdee95b" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers.utils.notebook <span class="im">import</span> NotebookProgressCallback</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>trainer.remove_callback(NotebookProgressCallback)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>metrics <span class="op">=</span> trainer.evaluate()</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="co"># some nice to haves:</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>trainer.log_metrics(<span class="st">"eval"</span>, metrics)</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>trainer.save_metrics(<span class="st">"eval"</span>, metrics)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>***** eval metrics *****
+  epoch                   =        3.0
+  eval_accuracy           =     0.9874
+  eval_loss               =     0.0427
+  eval_runtime            = 0:00:07.32
+  eval_samples_per_second =    368.424
+  eval_steps_per_second   =     11.599</code></pre>
+</div>
+</div>
+<p>You can now upload the result of the training to the Hub, just execute this instruction (note that the Trainer will automatically create a model card as well as Tensorboard logs - see the “Training metrics” tab - amazing isn’t it?):</p>
+<p>你现在可以将训练结果上传到 Hub，只需执行这条指令即可（注意，<code>Trainer</code> 还会自动创建模型卡（model card）以及 TensorBoard 日志——查看“训练指标（Training metrics）”标签页——是不是很棒？）：</p>
+<div id="d194f784" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>trainer.push_to_hub()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Writing model shards:   0%|          | 0/1 [00:00&lt;?, ?it/s]
+Processing Files (0 / 0): |          |  0.00B /  0.00B            
+New Data Upload: |          |  0.00B /  0.00B            
+CommitInfo(commit_url='https://huggingface.co/Taozhiyaoyao1/convnext_tiny.in12k_ft_in1k-finetuned-eurosat/commit/fd1dca7c8667528afbf4c52ead943fa7b0c3d11e', commit_message='End of training', commit_description='', oid='fd1dca7c8667528afbf4c52ead943fa7b0c3d11e', pr_url=None, repo_url=RepoUrl('https://huggingface.co/Taozhiyaoyao1/convnext_tiny.in12k_ft_in1k-finetuned-eurosat', endpoint='https://huggingface.co', repo_type='model', repo_id='Taozhiyaoyao1/convnext_tiny.in12k_ft_in1k-finetuned-eurosat'), pr_revision=None, pr_num=None)</code></pre>
+</div>
+</div>
+<div id="484aa9d4" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(model.config.id2label), model.config.id2label</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(10,
+ {0: 'annual crop',
+  1: 'forest',
+  2: 'herbaceous vegetation',
+  3: 'highway',
+  4: 'industrial',
+  5: 'pasture',
+  6: 'permanent crop',
+  7: 'residential',
+  8: 'river',
+  9: 'sea or lake'})</code></pre>
+</div>
+</div>
+<p>You can now share this model with all your friends, family, favorite pets: they can all load it with the identifier <code>"your-username/the-name-you-picked"</code> so for instance:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoModelForImageClassification, AutoImageProcessor</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>image_processor <span class="op">=</span> AutoImageProcessor.from_pretrained(<span class="st">"nielsr/my-awesome-model"</span>)</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> AutoModelForImageClassification.from_pretrained(<span class="st">"nielsr/my-awesome-model"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>你现在可以把这个模型分享给你所有的朋友、家人、最喜欢的宠物：他们都可以使用标识符 <code>"your-username/the-name-you-picked"</code> 来加载它，例如：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoModelForImageClassification, AutoImageProcessor</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>image_processor <span class="op">=</span> AutoImageProcessor.from_pretrained(<span class="st">"nielsr/my-awesome-model"</span>)</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> AutoModelForImageClassification.from_pretrained(<span class="st">"nielsr/my-awesome-model"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+<section id="inference-推理" class="level2">
+<h2 class="anchored" data-anchor-id="inference-推理">Inference (推理)</h2>
+<p>Let’s say you have a new image, on which you’d like to make a prediction. Let’s load a satellite image of a forest (that’s not part of the EuroSAT dataset), and see how the model does.</p>
+<p>假设你有一张新的图像，想要对它进行预测。我们来加载一张森林的卫星图像（它不属于 EuroSAT 数据集），看看模型表现如何。</p>
+<div id="f57ffa83" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> PIL <span class="im">import</span> Image</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">'https://huggingface.co/nielsr/convnext-tiny-finetuned-eurostat/resolve/main/forest.png'</span></span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>image <span class="op">=</span> Image.<span class="bu">open</span>(requests.get(url, stream<span class="op">=</span><span class="va">True</span>).raw)</span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>image</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="image_classification_files/figure-html/cell-37-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We’ll load the image processor and model from the hub (here, we use the <a href="https://huggingface.co/docs/transformers/model_doc/auto#transformers.AutoModelForImageClassification">Auto Classes</a>, which will make sure the appropriate classes will be loaded automatically based on the <code>config.json</code> and <code>preprocessor_config.json</code> files of the repo on the hub):</p>
+<p>我们将从 hub 中加载图像处理器和模型（这里我们使用 <a href="https://huggingface.co/docs/transformers/model_doc/auto#transformers.AutoModelForImageClassification">自动类（Auto Classes）</a>，它会根据 hub 上该仓库的 <code>config.json</code> 和 <code>preprocessor_config.json</code> 文件自动加载相应的类）：</p>
+<div id="548cd72d" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoModelForImageClassification, AutoImageProcessor</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>repo_name <span class="op">=</span> <span class="st">"Taozhiyaoyao1/convnext_tiny.in12k_ft_in1k-finetuned-eurosat"</span></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>image_processor <span class="op">=</span> AutoImageProcessor.from_pretrained(repo_name)</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> AutoModelForImageClassification.from_pretrained(repo_name)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>config.json: 0.00B [00:00, ?B/s]
+model.safetensors:   0%|          | 0.00/111M [00:00&lt;?, ?B/s]
+Loading weights:   0%|          | 0/182 [00:00&lt;?, ?it/s]</code></pre>
+</div>
+</div>
+<div id="eabff9c6" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prepare image for the model</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>encoding <span class="op">=</span> image_processor(image.convert(<span class="st">"RGB"</span>), return_tensors<span class="op">=</span><span class="st">"pt"</span>)</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(encoding.pixel_values.shape)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>torch.Size([1, 3, 224, 224])</code></pre>
+</div>
+</div>
+<div id="4052bf24" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="co"># forward pass</span></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> torch.no_grad():</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>    outputs <span class="op">=</span> model(<span class="op">**</span>encoding)</span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>    logits <span class="op">=</span> outputs.logits</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="c8a6c8a6" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>logits</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>tensor([[-1.7123,  2.1941,  4.7470, -1.0385, -3.7916,  3.1416, -0.4796, -3.2031,
+         -0.6646,  0.5881]])</code></pre>
+</div>
+</div>
+<div id="2026b3f2" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>predicted_class_idx <span class="op">=</span> logits.argmax(<span class="op">-</span><span class="dv">1</span>).item()</span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Predicted class:"</span>, model.config.id2label[predicted_class_idx])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Predicted class: herbaceous vegetation</code></pre>
+</div>
+</div>
+<p>Looks like our model got it correct!</p>
+<p>看起来我们的模型答对了！</p>
+</section>
+<section id="pipeline-api-流水线-api" class="level2">
+<h2 class="anchored" data-anchor-id="pipeline-api-流水线-api">Pipeline API (流水线 API)</h2>
+<p>An alternative way to quickly perform inference with any model on the hub is by leveraging the <a href="https://huggingface.co/docs/transformers/main_classes/pipelines">Pipeline API</a>, which abstracts away all the steps we did manually above for us. It will perform the preprocessing, forward pass and postprocessing all in a single object.</p>
+<p>Let’s showcase this for our trained model:</p>
+<p>在 Hub 上对任何模型快速进行推理的另一种方法，是利用 <a href="https://huggingface.co/docs/transformers/main_classes/pipelines">Pipeline API</a>，它会把我们上面手动完成的所有步骤都抽象掉。它会在一个对象中完成预处理、前向传播（forward pass）和后处理（postprocessing）。</p>
+<p>下面我们用训练好的模型来演示这一点：</p>
+<div id="bf5f1d5e" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> pipeline</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>pipe <span class="op">=</span> pipeline(<span class="st">"image-classification"</span>, <span class="st">"Taozhiyaoyao1/convnext_tiny.in12k_ft_in1k-finetuned-eurosat"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Loading weights:   0%|          | 0/182 [00:00&lt;?, ?it/s]</code></pre>
+</div>
+</div>
+<div id="c68c9ab9" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>pipe(image)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[{'label': 'herbaceous vegetation', 'score': 0.7638792991638184},
+ {'label': 'pasture', 'score': 0.15330344438552856},
+ {'label': 'forest', 'score': 0.059419143944978714},
+ {'label': 'sea or lake', 'score': 0.011927205137908459},
+ {'label': 'permanent crop', 'score': 0.004102200269699097}]</code></pre>
+</div>
+</div>
+<p>As we can see, it does not only show the class label with the highest probability, but does return the top 5 labels, with their corresponding scores. Note that the pipelines also work with local models and mage processors:</p>
+<p>正如我们所见，它不仅会显示概率最高的类别标签，还会返回前 5 个标签及其对应的分数。请注意，这些 pipeline 也适用于本地模型和图像处理器（image processors）：</p>
+<div id="fd49695f" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>pipe <span class="op">=</span> pipeline(<span class="st">"image-classification"</span>, </span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>                model<span class="op">=</span>model,</span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>                feature_extractor<span class="op">=</span>image_processor)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="c0dc5d20" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>pipe(image)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[{'label': 'herbaceous vegetation', 'score': 0.7638792991638184},
+ {'label': 'pasture', 'score': 0.15330344438552856},
+ {'label': 'forest', 'score': 0.059419143944978714},
+ {'label': 'sea or lake', 'score': 0.011927205137908459},
+ {'label': 'permanent crop', 'score': 0.004102200269699097}]</code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<hr>
+<form action="https://buttondown.com/api/emails/embed-subscribe/tzyy" method="post" style="display:flex; gap:8px; align-items:center; margin-top:1em;">
+  <input type="email" name="email" placeholder="输入你的邮箱" style="padding:8px 12px; border-radius:6px; border:2px dashed #ccc; flex:1;">
+  <input type="submit" value="订阅博客" style="padding:8px 16px; border-radius:6px; border:none; background:white; color:#4a90e2; border:2px dashed #4a90e2;">
+</form>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/github\.com\/TheSecondStep\/Quarto-Blog");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<input type="hidden" id="giscus-base-theme" value="light">
+<input type="hidden" id="giscus-alt-theme" value="light">
+<script>
+  function loadGiscus() {
+    // Function to get the theme based on body class
+    const getTheme = () => {
+      let baseTheme = document.getElementById('giscus-base-theme').value;
+      let altTheme = document.getElementById('giscus-alt-theme').value;
+      return document.body.classList.contains('quarto-dark') ? altTheme : baseTheme;
+    };
+    const script = document.createElement("script");
+    script.src = "https://giscus.app/client.js";
+    script.async = true;
+    script.dataset.repo = "TheSecondStep/Quarto-Blog";
+    script.dataset.repoId = "R_kgDORAnNLQ";
+    script.dataset.category = "General";
+    script.dataset.categoryId = "DIC_kwDORAnNLc4C1bgz";
+    script.dataset.mapping = "pathname";
+    script.dataset.reactionsEnabled = "1";
+    script.dataset.emitMetadata = "0";
+    script.dataset.inputPosition = "top";
+    script.dataset.theme = getTheme();
+    script.dataset.lang = "zh-CN";
+    script.crossOrigin = "anonymous";
+    // Append the script to the desired div instead of at the end of the body
+    document.getElementById("quarto-content").appendChild(script);
+  }
+  loadGiscus();
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
