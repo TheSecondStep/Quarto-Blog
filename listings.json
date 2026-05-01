@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/基于CIFAR10的微调/index.html",
       "/posts/图像分类任务数据增强可视化/index.html",
       "/posts/Fine-tuning for Image Classification with 🤗 Transformers/image_classification.html",
       "/posts/Tokenizer：BPE、WordPiece与Unigram分词算法/index.html",
